@@ -35,7 +35,7 @@ user_events = db.Table(
 interests = db.Table(
     'interests',
     db.Column('type', db.DateTime),
-    db.Column('name', db.String),
+    db.Column('name', db.String)
 )
 
 
@@ -58,6 +58,56 @@ class User(db.Model, SerializerMixin):
     interests = db.Column(db.String)
     swiped = db.Column(db.String)
     rejected = db.Column(db.String)
+
+    @validates('name')
+    def validate_name(self, _, value):
+        if not isinstance(value, str):
+            raise Exception('Name must be a string.')
+        return value
+
+    @validates('age')
+    def validate_age(self, _, value):
+        if not isinstance(value, int):
+            raise Exception('Age must be an integer.')
+        return value
+
+    @validates('email')
+    def validate_email(self, _, value):
+        if not isinstance(value, str):
+            raise Exception('Email must be a valid string.')
+        elif '@' not in value:
+            raise Exception('Email must contain @.')
+        return value
+
+    @validates('password')
+    def validate_password(self, _, value):
+        if not isinstance(value, str):
+            raise Exception('Password must be a string.')
+        elif not 5 <= len(value) <= 20:
+            raise Exception('Password must be between 5 and 20 characters.')
+        return value
+
+    @validates('gender')
+    def validate_gender(self, _, value):
+        genders = ['male', 'female', 'nonbinary']
+        if not isinstance(value, str):
+            raise Exception('Gender must be a string')
+        elif value.lower() not in genders:
+            raise Exception('Gender must be one of the approved types.')
+        return value
+    
+    @validates('preference')
+    def validate_preference(self, _, value):
+        preferences = ['male', 'female', 'nonbinary']
+        if not isinstance(value, str):
+            raise Exception('Preference must be a string')
+        elif value not in preferences:
+            raise Exception('Gender must be one of the approved types.')
+        return value
+
+    @validates('profile_picture')
+    def validate_profile_picture(self, _, value):
+        pass
 
     connections = db.relationship('User',
         secondary = user_connections,
