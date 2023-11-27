@@ -18,7 +18,8 @@ user_messages = db.Table(
     db.Column('user1_id', db.Integer, db.ForeignKey('users.id')),
     db.Column('user2_id', db.Integer, db.ForeignKey('users.id')),
     db.Column('user1_messages', db.String),
-    db.Column('user2_messages', db.String)
+    db.Column('user2_messages', db.String),
+    db.Column('created_at', db.DateTime, server_default=func.now())
 )
 
 user_events = db.Table(
@@ -101,7 +102,7 @@ class User(db.Model, SerializerMixin):
         preferences = ['male', 'female', 'nonbinary']
         if not isinstance(value, str):
             raise Exception('Preference must be a string')
-        elif value not in preferences:
+        elif value.lower() not in preferences:
             raise Exception('Gender must be one of the approved types.')
         return value
 
