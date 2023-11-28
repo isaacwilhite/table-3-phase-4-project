@@ -3,42 +3,10 @@ from sqlalchemy import func
 from sqlalchemy.orm import validates
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.hybrid import hybrid_property
 
-from config import db
+from config import db, bcrypt
 from datetime import datetime
-
-user_connections = db.Table(
-    'user_connections',
-    db.Column('user1_id', db.Integer, db.ForeignKey('users.id')),
-    db.Column('user2_id', db.Integer, db.ForeignKey('users.id'))
-)
-
-user_messages = db.Table(
-    'user_messages',
-    db.Column('user1_id', db.Integer, db.ForeignKey('users.id')),
-    db.Column('user2_id', db.Integer, db.ForeignKey('users.id')),
-    db.Column('user1_messages', db.String),
-    db.Column('user2_messages', db.String),
-    db.Column('created_at', db.DateTime, server_default=func.now())
-)
-
-user_events = db.Table(
-    'user_events',
-    db.Column('user1_id', db.Integer, db.ForeignKey('users.id')),
-    db.Column('user2_id', db.Integer, db.ForeignKey('users.id')),
-    db.Column('date', db.DateTime),
-    db.Column('type', db.String),
-    db.Column('location', db.String),
-    db.Column('details', db.String),
-    db.Column('status', db.String)
-)
-
-interests = db.Table(
-    'interests',
-    db.Column('type', db.DateTime),
-    db.Column('name', db.String)
-)
-
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
@@ -49,7 +17,7 @@ class User(db.Model, SerializerMixin):
     name = db.Column(db.String, nullable=False)
     age = db.Column(db.Integer, nullable=False)
     email = db.Column(db.String, nullable=False)
-    password = db.Column(db.String, nullable=False)
+    _password_hash = db.Column(db.String, nullable=False)
     gender = db.Column(db.String, nullable=False)
     preference = db.Column(db.String, nullable=False)
     profile_picture = db.Column(db.String)
@@ -59,6 +27,18 @@ class User(db.Model, SerializerMixin):
     interests = db.Column(db.String)
     swiped = db.Column(db.String)
     rejected = db.Column(db.String)
+
+    @hybrid_property
+    def password_hash(self):
+        return self._password_hash
+    
+    @password_hash.setter
+    def password_hash(self, password):
+        password_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
+        self._password_hash = password_hash.decode('utf-8')
+
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
 
     @validates('name')
     def validate_name(self, _, value):
@@ -110,23 +90,29 @@ class User(db.Model, SerializerMixin):
     def validate_profile_picture(self, _, value):
         pass
 
-    connections = db.relationship('User',
-        secondary = user_connections,
-        primaryjoin = (user_connections.c.user1_id == id),
-        secondaryjoin = (user_connections.c.user2_id == id),
-        backref = 'connection'
-    )
+class Connection(db.Model, SerializerMixin):
+    __tablename__ = 'connections'
 
-    messages = db.relationship('User',
-        secondary = user_messages,
-        primaryjoin = (user_messages.c.user1_id == id),
-        secondaryjoin = (user_messages.c.user2_id == id),
-        backref = 'message'
-    )
+    id = db.Column(db.Integer, primary_key=True)
+    user1_id = db.Column(db.Integer)
+    user2_id = db.Column(db.Integer)
 
-    events = db.relationship('User',
-        secondary = user_events,
-        primaryjoin = (user_events.c.user1_id == id),
-        secondaryjoin = (user_events.c.user2_id == id),
-        backref = 'event'
-    )
+class Event(db.Model, SerializerMixin):
+    __tablename__ = 'events'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user1_id = db.Column(db.Integer)
+    user2_id = db.Column(db.Integer)
+    date = db.Column(db.DateTime)
+    time = db.Column(db.String)
+    location = db.Column(db.String)
+    details = db.Column(db.String)
+
+class Message(db.Model, SerializerMixin):
+    __tablename__ = 'messages'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user1_id = db.Column(db.Integer)
+    user2_id = db.Column(db.Integer)
+    body = db.Column(db.String)
+    created_at = db.Column(db.DateTime, server_default=func.now())
