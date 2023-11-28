@@ -1,8 +1,16 @@
+import NavBar from './NavBar'
+import Header from './Header'
+
 const Messages = () => {
+  const title = 'MESSAGES'
   return (
-    <>
-      <h1>HELLO MESSAGES</h1>
-    </>
+    <div className='container'>
+      <Header title={title} />
+      <NavBar />
+      <div className='content'>
+        <h1>Content goes here.</h1>
+      </div>
+    </div>
   )
 }
 
