@@ -103,13 +103,13 @@ class Event(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     user1_id = db.Column(db.Integer)
     user2_id = db.Column(db.Integer)
-    date = db.Column(db.DateTime)
+    date = db.Column(db.String)
     time = db.Column(db.String)
     location = db.Column(db.String)
     details = db.Column(db.String)
 
-class Message(db.Model, SerializerMixin):
-    __tablename__ = 'messages'
+class Conversation(db.Model, SerializerMixin):
+    __tablename__ = 'conversations'
 
     id = db.Column(db.Integer, primary_key=True)
     user1_id = db.Column(db.Integer)
