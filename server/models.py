@@ -33,6 +33,9 @@ class User(db.Model, SerializerMixin):
 
     events = association_proxy('connections', 'event')
 
+    def __repr__(self):
+        return f"User #{self.id}: {self.email}"
+
     @hybrid_property
     def password_hash(self):
         return self._password_hash
@@ -83,10 +86,20 @@ class Event(db.Model, SerializerMixin):
     __tablename__ = 'events'
 
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
     date = db.Column(db.String)
     time = db.Column(db.String)
     location = db.Column(db.String)
     details = db.Column(db.String)
+
+    def __repr__(self):
+        return f"Event #{self.id} : {self.name}"
+    
+    @validates('name')
+    def validate_name(self, _, value):
+        if not isinstance(value, str):
+            raise ValueError('Name must be a valid string.')
+        return value
 
     @validates('date')
     def validate_date(self, _, value):
@@ -122,6 +135,9 @@ class Connection(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
+
+    def __repr__(self):
+        return f"Connection #{self.id} for user #{self.user_id}"
 
     @validates('user_id')
     def validate_event_id(self, _, value):
