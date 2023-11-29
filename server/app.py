@@ -32,7 +32,7 @@ class CreateUser(Resource):
                 name = '',
                 age = 0,
                 email = new_data['email'],
-                password_hash = new_data['password'],
+                _password_hash = new_data['password'],
                 gender = '',
                 preference = '',
                 profile_picture = '',
