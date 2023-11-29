@@ -27,6 +27,7 @@ class User(db.Model, SerializerMixin):
     interests = db.Column(db.String)
     swiped = db.Column(db.String)
     rejected = db.Column(db.String)
+    friends = db.Column(db.String)
 
     connections = db.relationship('Connection', back_populates='user')
 

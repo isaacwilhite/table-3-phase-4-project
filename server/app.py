@@ -38,7 +38,8 @@ class CreateUser(Resource):
                 bio = '',
                 interests = '',
                 swiped = '',
-                rejected = ''
+                rejected = '',
+                friends = ''
             )
             db.session.add(new_item)    
             db.session.commit()
