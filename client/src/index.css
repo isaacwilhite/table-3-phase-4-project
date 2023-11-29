@@ -58,7 +58,7 @@ input.loginInput {
   margin-left: 10%;
   margin-right: 10%;
   margin-top: 3rem;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   grid-template-rows: repeat(5, 1fr);
   background-color: #fff9ae;
   width: 80%;
@@ -124,3 +124,20 @@ button#logout:hover {
   grid-row: 2 / span 4;
   grid-column: 2 span 4;
 }
+
+
+/* ----------------------------------map-css-start--------------------------------------- */
+
+.searchbar {
+
+}
+.map {
+  display: grid;
+}
+.placesbuttons {
+  display: flex;
+  margin-bottom: 15px;
+  overflow: scroll;
+}
+
+/* ------------------------------------map-css-end--------------------------------------- */
