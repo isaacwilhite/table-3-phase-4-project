@@ -18,6 +18,15 @@ app.secret_key = os.environ.get("APP_SECRET")
 
 # Views go here!
 
+class CurrentUser(Resource):
+    def get(self):
+        try:
+            id = session['current_user']
+            selected = db.session.get(User, id)
+            return make_response(selected.to_dict(), 200)
+        except Exception:
+            return make_response({"Error": "User does not exist."}, 404)
+
 class CreateUser(Resource):
     def post(self):
         try:
@@ -182,6 +191,7 @@ class UserEvents(Resource):
                 return make_response({'Error' : 'Unable to delete event.'}, 400)
         return make_response({"Error": "Event does not exist."}, 404)
 
+api.add_resource(CurrentUser, '/current')
 api.add_resource(LoginUser, '/login')
 api.add_resource(CreateUser, '/signup')
 api.add_resource(LogoutUser, '/logout')
