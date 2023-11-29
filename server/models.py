@@ -8,6 +8,12 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from config import db, bcrypt
 from datetime import datetime
 
+user_connections = db.Table(
+    'user_connections',
+    db.Column('user1', db.Integer, db.ForeignKey('users.id')),
+    db.Column('user2', db.Integer, db.ForeignKey('users.id'))
+)
+
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
@@ -28,6 +34,13 @@ class User(db.Model, SerializerMixin):
     swiped = db.Column(db.String)
     rejected = db.Column(db.String)
     friends = db.Column(db.String)
+
+    connection = db.relationship(
+        'User', lambda: user_connections,
+        primaryjoin=lambda: User.id == user_connections.c.user1,
+        secondaryjoin=lambda: User.id == user_connections.c.user2,
+        backref = 'connected'
+    )
 
     connections = db.relationship('Connection', back_populates='user')
 
