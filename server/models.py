@@ -68,27 +68,11 @@ class User(db.Model, SerializerMixin):
             raise Exception('Password must be between 5 and 20 characters.')
         return value
 
-    @validates('gender')
-    def validate_gender(self, _, value):
-        genders = ['male', 'female', 'nonbinary']
-        if not isinstance(value, str):
-            raise Exception('Gender must be a string')
-        elif value.lower() not in genders:
-            raise Exception('Gender must be one of the approved types.')
-        return value
-    
-    @validates('preference')
-    def validate_preference(self, _, value):
-        preferences = ['male', 'female', 'nonbinary']
-        if not isinstance(value, str):
-            raise Exception('Preference must be a string')
-        elif value.lower() not in preferences:
-            raise Exception('Gender must be one of the approved types.')
-        return value
-
     @validates('profile_picture')
     def validate_profile_picture(self, _, value):
-        pass
+        if not isinstance(value, str):
+            raise Exception('Name must be a string.')
+        return value
 
 class Connection(db.Model, SerializerMixin):
     __tablename__ = 'connections'

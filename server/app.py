@@ -22,7 +22,34 @@ app.secret_key = os.environ.get("APP_SECRET")
 # Views go here!
 
 class CreateUser(Resource):
-    pass
+    def post(self):
+        try:
+            new_data = request.get_json()
+            new_item = User(
+                id = None,
+                created_at = None,
+                updated_at = None,
+                name = '',
+                age = 0,
+                email = new_data['email'],
+                password_hash = new_data['password'],
+                gender = '',
+                preference = '',
+                profile_picture = '',
+                location = '',
+                location_range = 0,
+                bio = '',
+                interests = '',
+                swiped = '',
+                rejected = ''
+            )
+            db.session.add(new_item)    
+            db.session.commit()
+            session['current_user'] = new_item.id
+            return make_response(new_item.to_dict(rules=('-_password_hash',)), 201)
+        except:
+            db.session.rollback()
+            return make_response({'Error' : 'Could not create new user.'}, 400)
 
 class LoginUser(Resource):
     def post(self):
@@ -30,7 +57,6 @@ class LoginUser(Resource):
         password = request.get_json()['password']
         selected = User.query.filter_by(email=email).first()
         
-
         if not selected or not selected.authenticate(password):
             return make_response({"Error" : "Invalid credentials."}, 422)
         
@@ -186,6 +212,7 @@ class UserConversations(Resource):
 
 
 api.add_resource(LoginUser, '/login')
+api.add_resource(CreateUser, '/signup')
 api.add_resource(Users, '/users')
 api.add_resource(UsersById, '/users/<int:id>')
 api.add_resource(MakeConnection, '/connections')
