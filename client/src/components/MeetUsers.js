@@ -1,7 +1,17 @@
 import NavBar from './NavBar'
 import Header from './Header'
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 
 const MeetUsers = () => {
+  const navigate = useNavigate()
+  
+  useEffect(() => {
+    if (localStorage.getItem('user_active') == 'false') {
+      navigate('/');
+    }
+  }, []);
+  
   const title = 'MEET USERS'
   return (
     <div className='container'>
