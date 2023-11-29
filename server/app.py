@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# Standard library imports
-
 # Remote library imports
 from flask import Flask, request, make_response, session
 from flask_restful import Resource, Api
@@ -11,8 +9,7 @@ import ipdb
 from config import app, db, api
 
 # Add your model imports
-from models import User, Connection, Conversation, Event
-
+from models import User, Connection, Event
 import os, secrets
 from dotenv import load_dotenv
 
@@ -136,7 +133,7 @@ class MakeConnection(Resource):
 class UserConnections(Resource):
     def get(self, id):
         try:
-            results = [connection.to_dict() for connection in Connection.query if connection.user1_id == id or connection.user2_id == id]
+            results = [connection.to_dict() for connection in Connection.query if connection.user_id == id]
             return make_response(results, 200)
         except Exception:
             return make_response({'Error' : 'Could not fetch user connections.'}, 400)
@@ -167,7 +164,7 @@ class MakeEvent(Resource):
 class UserEvents(Resource):
     def get(self, id):
         try:
-            results = [event.to_dict() for event in Event.query if event.user1_id == id or event.user2_id == id]
+            results = [event.to_dict() for event in Event.query if event.user_id == id]
             return make_response(results, 200)
         except Exception:
             return make_response({'Error' : 'Could not fetch user events.'}, 400)
@@ -183,39 +180,6 @@ class UserEvents(Resource):
                 return make_response({'Error' : 'Unable to delete event.'}, 400)
         return make_response({"Error": "Event does not exist."}, 404)
 
-
-class MakeConversation(Resource):
-    def post(self):
-        try:
-            new_data = request.get_json()
-            new_item = Conversation(**new_data)
-            db.session.add(new_item)    
-            db.session.commit()
-            return make_response(new_item.to_dict(), 201)
-        except ValueError:
-            db.session.rollback()
-            return make_response({'Error' : 'Could not create new message.'}, 400)
-
-class UserConversations(Resource):
-    def get(self, id):
-        try:
-            results = [conversation.to_dict() for conversation in Conversation.query if conversation.user1_id == id or conversation.user2_id == id]
-            return make_response(results, 200)
-        except Exception:
-            return make_response({'Error' : 'Could not fetch conversation.'}, 400)
-        
-    def delete(self, id):
-        if selected := db.session.get(Conversation, id):
-            try:
-                db.session.delete(selected)
-                db.session.commit()
-                return make_response({'Message' : 'Conversation has been deleted.'}, 204)
-            except Exception:
-                db.session.rollback()
-                return make_response({'Error' : 'Unable to delete conversation.'}, 400)
-        return make_response({"Error": "Conversation does not exist."}, 404)
-
-
 api.add_resource(LoginUser, '/login')
 api.add_resource(CreateUser, '/signup')
 api.add_resource(LogoutUser, '/logout')
@@ -225,8 +189,6 @@ api.add_resource(MakeConnection, '/connections')
 api.add_resource(UserConnections, '/connections/<int:id>')
 api.add_resource(MakeEvent, '/events')
 api.add_resource(UserEvents, '/events/<int:id>')
-api.add_resource(MakeConversation, '/conversations')
-api.add_resource(UserConversations, '/conversations/<int:id>')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

@@ -9,7 +9,7 @@ from faker import Faker
 
 # Local imports
 from app import app
-from models import db, User, Connection
+from models import db, User, Connection, Event
 
 if __name__ == '__main__':
     fake = Faker()
@@ -21,7 +21,6 @@ if __name__ == '__main__':
                 name = fake.first_name(),
                 age = randint(18, 90),
                 email = fake.email(),
-                # _password_hash = 'password',
                 gender = rc(['male', 'female', 'nonbinary']),
                 preference = rc(['male', 'female', 'nonbinary']),
                 profile_picture = '',
@@ -35,9 +34,24 @@ if __name__ == '__main__':
         db.session.add_all(users)
         db.session.commit()
 
+    def create_events():
+        events = []
+        for n in range(20):
+            new_event = Event(
+                date = fake.date(),
+                time = fake.time(),
+                location = fake.address(),
+                details = fake.sentence()
+            )
+            events.append(new_event)
+
+        db.session.add_all(events)
+        db.session.commit()
+
+    def create_connections():
         connections = []
         for n in range(20):
-            new_connection = Connection(user1_id=randint(1, 20), user2_id=randint(1, 20))
+            new_connection = Connection(user_id=randint(1, 20), event_id=randint(1, 20))
             connections.append(new_connection)
         
         db.session.add_all(connections)
@@ -48,4 +62,7 @@ if __name__ == '__main__':
         print("Starting seed...")
         # Seed code goes here
         create_users()
+        create_events()
+        create_connections()
+        print("Seeding finished!")
         

@@ -28,6 +28,10 @@ class User(db.Model, SerializerMixin):
     swiped = db.Column(db.String)
     rejected = db.Column(db.String)
 
+    connections = db.relationship('Connection', back_populates='user')
+
+    events = association_proxy('connections', 'event')
+
     @hybrid_property
     def password_hash(self):
         return self._password_hash
@@ -74,29 +78,61 @@ class User(db.Model, SerializerMixin):
             raise Exception('Name must be a string.')
         return value
 
-class Connection(db.Model, SerializerMixin):
-    __tablename__ = 'connections'
-
-    id = db.Column(db.Integer, primary_key=True)
-    user1_id = db.Column(db.Integer)
-    user2_id = db.Column(db.Integer)
-
 class Event(db.Model, SerializerMixin):
     __tablename__ = 'events'
 
     id = db.Column(db.Integer, primary_key=True)
-    user1_id = db.Column(db.Integer)
-    user2_id = db.Column(db.Integer)
     date = db.Column(db.String)
     time = db.Column(db.String)
     location = db.Column(db.String)
     details = db.Column(db.String)
 
-class Conversation(db.Model, SerializerMixin):
-    __tablename__ = 'conversations'
+    @validates('date')
+    def validate_date(self, _, value):
+        if not isinstance(value, str):
+            raise ValueError('Date must be a valid string.')
+        return value
+    
+    @validates('time')
+    def validate_time(self, _, value):
+        if not isinstance(value, str):
+            raise ValueError('Time must be a valid string.')
+        return value
+    
+    @validates('location')
+    def validate_location(self, _, value):
+        if not isinstance(value, str):
+            raise ValueError('Location must be a valid string.')
+        return value
+    
+    @validates('details')
+    def validate_details(self, _, value):
+        if not isinstance(value, str):
+            raise ValueError('Details must be a valid string.')
+        return value
+
+    connections = db.relationship('Connection', back_populates='event')
+
+    users = association_proxy('connections', 'user')
+
+class Connection(db.Model, SerializerMixin):
+    __tablename__ = 'connections'
 
     id = db.Column(db.Integer, primary_key=True)
-    user1_id = db.Column(db.Integer)
-    user2_id = db.Column(db.Integer)
-    body = db.Column(db.String)
-    created_at = db.Column(db.DateTime, server_default=func.now())
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
+
+    @validates('user_id')
+    def validate_event_id(self, _, value):
+        if not isinstance(value, int):
+            raise ValueError('User Id must be an integer.')
+        return value
+
+    @validates('event_id')
+    def validate_event_id(self, _, value):
+        if not isinstance(value, int):
+            raise ValueError('Event Id must be an integer.')
+        return value
+
+    user = db.relationship('User', back_populates='connections')
+    event = db.relationship('Event', back_populates='connections')
