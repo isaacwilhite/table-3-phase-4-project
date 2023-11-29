@@ -14,7 +14,7 @@ import Error from './Error';
 function Router() {
   const routes = (
     <>
-      <Route path='/title' element={<Title/>} />,
+      <Route path='/' element={<Title/>} />,
       <Route path='/login' element={<Login/>} />,
       <Route path='/signup' element={<Signup/>} />,
       <Route path='/userhome' element={<UserHome/>} />,
@@ -29,7 +29,6 @@ function Router() {
   return (
     <>
       <Routes>
-        <Route path='/' element={<Title/>} />
         {routes}
         <Route path="/:error" element={<Error />} />
       </Routes>

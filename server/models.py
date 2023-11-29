@@ -34,11 +34,11 @@ class User(db.Model, SerializerMixin):
     
     @password_hash.setter
     def password_hash(self, password):
-        password_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
-        self._password_hash = password_hash.decode('utf-8')
+        password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+        self._password_hash = password_hash
 
     def authenticate(self, password):
-        return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
+        return bcrypt.check_password_hash(self._password_hash, password)
 
     @validates('name')
     def validate_name(self, _, value):
@@ -68,27 +68,11 @@ class User(db.Model, SerializerMixin):
             raise Exception('Password must be between 5 and 20 characters.')
         return value
 
-    @validates('gender')
-    def validate_gender(self, _, value):
-        genders = ['male', 'female', 'nonbinary']
-        if not isinstance(value, str):
-            raise Exception('Gender must be a string')
-        elif value.lower() not in genders:
-            raise Exception('Gender must be one of the approved types.')
-        return value
-    
-    @validates('preference')
-    def validate_preference(self, _, value):
-        preferences = ['male', 'female', 'nonbinary']
-        if not isinstance(value, str):
-            raise Exception('Preference must be a string')
-        elif value.lower() not in preferences:
-            raise Exception('Gender must be one of the approved types.')
-        return value
-
     @validates('profile_picture')
     def validate_profile_picture(self, _, value):
-        pass
+        if not isinstance(value, str):
+            raise Exception('Name must be a string.')
+        return value
 
 class Connection(db.Model, SerializerMixin):
     __tablename__ = 'connections'

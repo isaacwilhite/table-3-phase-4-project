@@ -3,8 +3,9 @@
 # Standard library imports
 
 # Remote library imports
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, session
 from flask_restful import Resource, Api
+import ipdb
 
 # Local imports
 from config import app, db, api
@@ -12,8 +13,61 @@ from config import app, db, api
 # Add your model imports
 from models import User, Connection, Conversation, Event
 
+import os, secrets
+from dotenv import load_dotenv
+
+load_dotenv()
+app.secret_key = os.environ.get("APP_SECRET")
+
 # Views go here!
 
+class CreateUser(Resource):
+    def post(self):
+        try:
+            new_data = request.get_json()
+            new_item = User(
+                id = None,
+                created_at = None,
+                updated_at = None,
+                name = '',
+                age = 0,
+                email = new_data['email'],
+                _password_hash = new_data['password'],
+                gender = '',
+                preference = '',
+                profile_picture = '',
+                location = '',
+                location_range = 0,
+                bio = '',
+                interests = '',
+                swiped = '',
+                rejected = ''
+            )
+            db.session.add(new_item)    
+            db.session.commit()
+            session['current_user'] = new_item.id
+            return make_response(new_item.to_dict(rules=('-_password_hash',)), 201)
+        except:
+            db.session.rollback()
+            return make_response({'Error' : 'Could not create new user.'}, 400)
+
+class LoginUser(Resource):
+    def post(self):
+        email = request.get_json()['email']
+        password = request.get_json()['password']
+        selected = User.query.filter_by(email=email).first()
+        
+        if not selected or not selected.authenticate(password):
+            return make_response({"Error" : "Invalid credentials."}, 422)
+        
+        session['current_user'] = selected.id
+        return selected.to_dict(rules=('-_password_hash',))
+    
+class LogoutUser(Resource):
+    def get(self):
+        session['current_user'] = None
+        return make_response({}, 200)
+    
 class Users(Resource):
     def get(self):
         try:
@@ -162,6 +216,9 @@ class UserConversations(Resource):
         return make_response({"Error": "Conversation does not exist."}, 404)
 
 
+api.add_resource(LoginUser, '/login')
+api.add_resource(CreateUser, '/signup')
+api.add_resource(LogoutUser, '/logout')
 api.add_resource(Users, '/users')
 api.add_resource(UsersById, '/users/<int:id>')
 api.add_resource(MakeConnection, '/connections')

@@ -1,8 +1,26 @@
+import NavBar from './NavBar'
+import Header from './Header'
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+
 const Messages = () => {
+  const navigate = useNavigate()
+  
+  useEffect(() => {
+    if (localStorage.getItem('user_active') == 'false') {
+      navigate('/');
+    }
+  }, []);
+  
+  const title = 'MESSAGES'
   return (
-    <>
-      <h1>HELLO MESSAGES</h1>
-    </>
+    <div className='container'>
+      <Header title={title} />
+      <NavBar />
+      <div className='content'>
+        <h1>Content goes here.</h1>
+      </div>
+    </div>
   )
 }
 
