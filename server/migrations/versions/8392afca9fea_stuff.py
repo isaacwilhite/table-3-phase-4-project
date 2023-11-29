@@ -1,8 +1,8 @@
-"""initial seed
+"""stuff
 
-Revision ID: 5e79388b511b
+Revision ID: 8392afca9fea
 Revises: 
-Create Date: 2023-11-28 21:41:53.830584
+Create Date: 2023-11-28 22:19:55.526303
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5e79388b511b'
+revision = '8392afca9fea'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -43,6 +43,7 @@ def upgrade():
     sa.Column('interests', sa.String(), nullable=True),
     sa.Column('swiped', sa.String(), nullable=True),
     sa.Column('rejected', sa.String(), nullable=True),
+    sa.Column('friends', sa.String(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('connections',
