@@ -133,8 +133,8 @@ class Connection(db.Model, SerializerMixin):
     __tablename__ = 'connections'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), cascade='all, delete-orphan')
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), cascade='all, delete-orphan')
 
     def __repr__(self):
         return f"Connection #{self.id} for user #{self.user_id}"
