@@ -32,7 +32,7 @@ class CreateUser(Resource):
                 name = '',
                 age = 0,
                 email = new_data['email'],
-                _password_hash = new_data['password'],
+                _password_hash = '',
                 gender = '',
                 preference = '',
                 profile_picture = '',
@@ -43,6 +43,7 @@ class CreateUser(Resource):
                 swiped = '',
                 rejected = ''
             )
+            new_item['_password_hash'] = new_data['password']
             db.session.add(new_item)    
             db.session.commit()
             session['current_user'] = new_item.id
