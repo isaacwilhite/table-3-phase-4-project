@@ -63,6 +63,11 @@ class LoginUser(Resource):
         session['current_user'] = selected.id
         return selected.to_dict(rules=('-_password_hash',))
     
+class LogoutUser(Resource):
+    def get(self):
+        session['current_user'] = None
+        return make_response({}, 200)
+    
 class Users(Resource):
     def get(self):
         try:
@@ -213,6 +218,7 @@ class UserConversations(Resource):
 
 api.add_resource(LoginUser, '/login')
 api.add_resource(CreateUser, '/signup')
+api.add_resource(LogoutUser, '/logout')
 api.add_resource(Users, '/users')
 api.add_resource(UsersById, '/users/<int:id>')
 api.add_resource(MakeConnection, '/connections')
