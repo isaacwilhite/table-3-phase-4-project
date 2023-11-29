@@ -43,7 +43,7 @@ class CreateUser(Resource):
                 swiped = '',
                 rejected = ''
             )
-            new_item['_password_hash'] = new_data['password']
+            new_item.password_hash = new_data['password']
             db.session.add(new_item)    
             db.session.commit()
             session['current_user'] = new_item.id
