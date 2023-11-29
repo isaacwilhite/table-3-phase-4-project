@@ -45,7 +45,7 @@ class CreateUser(Resource):
             db.session.add(new_item)    
             db.session.commit()
             session['current_user'] = new_item.id
-            return make_response(new_item.to_dict(rules=('-_password_hash',)), 201)
+            return make_response(new_item.to_dict(), 201)
         except:
             db.session.rollback()
             return make_response({'Error' : 'Could not create new user.'}, 400)
@@ -55,12 +55,12 @@ class LoginUser(Resource):
         email = request.get_json()['email']
         password = request.get_json()['password']
         selected = User.query.filter_by(email=email).first()
-        
         if not selected or not selected.authenticate(password):
             return make_response({"Error" : "Invalid credentials."}, 422)
         
         session['current_user'] = selected.id
-        return selected.to_dict(rules=('-_password_hash',))
+    
+        return selected.to_dict(rules=('-connections.user', '-events.users')), 200
     
 class LogoutUser(Resource):
     def get(self):

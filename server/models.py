@@ -33,6 +33,8 @@ class User(db.Model, SerializerMixin):
 
     events = association_proxy('connections', 'event')
 
+    serialize_rules = ('-connections.user', '-events.users')
+
     def __repr__(self):
         return f"User #{self.id}: {self.email}"
 
@@ -92,6 +94,12 @@ class Event(db.Model, SerializerMixin):
     location = db.Column(db.String)
     details = db.Column(db.String)
 
+    connections = db.relationship('Connection', back_populates='event')
+
+    users = association_proxy('connections', 'user')
+
+    serialize_rules = ('-connections.event', '-users.events')
+
     def __repr__(self):
         return f"Event #{self.id} : {self.name}"
     
@@ -125,16 +133,17 @@ class Event(db.Model, SerializerMixin):
             raise ValueError('Details must be a valid string.')
         return value
 
-    connections = db.relationship('Connection', back_populates='event')
-
-    users = association_proxy('connections', 'user')
-
 class Connection(db.Model, SerializerMixin):
     __tablename__ = 'connections'
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
+
+    user = db.relationship('User', back_populates='connections')
+    event = db.relationship('Event', back_populates='connections')
+
+    serialize_rules = ('-user.connections', '-event.connections')
 
     def __repr__(self):
         return f"Connection #{self.id} for user #{self.user_id}"
@@ -150,6 +159,3 @@ class Connection(db.Model, SerializerMixin):
         if not isinstance(value, int):
             raise ValueError('Event Id must be an integer.')
         return value
-
-    user = db.relationship('User', back_populates='connections')
-    event = db.relationship('Event', back_populates='connections')
