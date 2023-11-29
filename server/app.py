@@ -3,8 +3,9 @@
 # Standard library imports
 
 # Remote library imports
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, session
 from flask_restful import Resource, Api
+import ipdb
 
 # Local imports
 from config import app, db, api
@@ -12,8 +13,30 @@ from config import app, db, api
 # Add your model imports
 from models import User, Connection, Conversation, Event
 
+import os, secrets
+from dotenv import load_dotenv
+
+load_dotenv()
+app.secret_key = os.environ.get("APP_SECRET")
+
 # Views go here!
 
+class CreateUser(Resource):
+    pass
+
+class LoginUser(Resource):
+    def post(self):
+        email = request.get_json()['email']
+        password = request.get_json()['password']
+        selected = User.query.filter_by(email=email).first()
+        
+
+        if not selected or not selected.authenticate(password):
+            return make_response({"Error" : "Invalid credentials."}, 422)
+        
+        session['current_user'] = selected.id
+        return selected.to_dict(rules=('-_password_hash',))
+    
 class Users(Resource):
     def get(self):
         try:
@@ -162,6 +185,7 @@ class UserConversations(Resource):
         return make_response({"Error": "Conversation does not exist."}, 404)
 
 
+api.add_resource(LoginUser, '/login')
 api.add_resource(Users, '/users')
 api.add_resource(UsersById, '/users/<int:id>')
 api.add_resource(MakeConnection, '/connections')

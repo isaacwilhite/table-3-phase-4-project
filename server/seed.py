@@ -21,7 +21,7 @@ if __name__ == '__main__':
                 name = fake.first_name(),
                 age = randint(18, 90),
                 email = fake.email(),
-                _password_hash = 'password',
+                # _password_hash = 'password',
                 gender = rc(['male', 'female', 'nonbinary']),
                 preference = rc(['male', 'female', 'nonbinary']),
                 profile_picture = '',
@@ -29,6 +29,7 @@ if __name__ == '__main__':
                 location_range = randint(1, 200),
                 bio = fake.sentence()
             )
+            new_user.password_hash = 'password'
             users.append(new_user)
             
         db.session.add_all(users)
