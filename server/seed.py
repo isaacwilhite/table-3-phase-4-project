@@ -52,7 +52,6 @@ if __name__ == '__main__':
             preference = 'male',
             profile_picture = 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
             location = 'Los Angeles',
-            location_range = randint(1, 100),
             bio = "Dedicated to fitness and personal growth, I've mastered the art of discipline in both the gym and life. Currently pursuing a degree in nutrition, I'm on a mission to help others lead healthier lives. My ideal day involves a morning run, a hearty meal, and an evening spent enjoying good company. Looking for a partner who shares a passion for wellness and values a strong, supportive relationship."
         )
 
@@ -123,7 +122,6 @@ if __name__ == '__main__':
             preference = 'female',
             profile_picture = 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
             location = 'Denver',
-            location_range = randint(1, 100),
             bio = "Culinary enthusiast with dreams of owning a bustling food truck. Whether experimenting with new recipes or exploring hidden gems in the city, I'm always on the lookout for the next gastronomic adventure. Looking for someone who appreciates a well-cooked meal, shares a love for travel, and dreams of building a future where every day is a feast for the senses."
         )
 
