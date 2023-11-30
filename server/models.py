@@ -29,9 +29,7 @@ class User(db.Model, SerializerMixin):
     preference = db.Column(db.String, nullable=False)
     profile_picture = db.Column(db.String)
     location = db.Column(db.String, nullable=False)
-    location_range = db.Column(db.Integer)
     bio = db.Column(db.String)
-    interests = db.Column(db.String)
 
     pending_sent_connections = db.relationship(
         'User', secondary = user_connections,
@@ -47,18 +45,11 @@ class User(db.Model, SerializerMixin):
         backref = 'accepted_received_connections'
     )
 
-    rejected_sent_connections = db.relationship(
-        'User', secondary = user_connections,
-        primaryjoin=(id == user_connections.c.user1) & (user_connections.c.status == 'rejected'),
-        secondaryjoin=(id == user_connections.c.user2) & (user_connections.c.status == 'rejected'),
-        backref = 'rejected_received_connections'
-    )
-
     connections = db.relationship('Connection', back_populates='user')
 
     events = association_proxy('connections', 'event')
 
-    serialize_rules = ('-connections.user', '-events.users')
+    serialize_rules = ('-connections.user', '-events.users', '-accepted_sent_connections', '-pending_sent_connections', '-rejected_sent_connections', '-pending_received_connections', '-rejected_received_connections', '-accepted_received_connections')
 
     def __repr__(self):
         return f"User #{self.id}: {self.email}"
@@ -174,13 +165,7 @@ class Connection(db.Model, SerializerMixin):
         return f"Connection #{self.id} for user #{self.user_id}"
 
     @validates('user_id')
-    def validate_event_id(self, _, value):
+    def validate_user_id(self, _, value):
         if not isinstance(value, int):
             raise ValueError('User Id must be an integer.')
-        return value
-
-    @validates('event_id')
-    def validate_event_id(self, _, value):
-        if not isinstance(value, int):
-            raise ValueError('Event Id must be an integer.')
         return value
