@@ -1,17 +1,34 @@
 import NavBar from './NavBar'
 import Header from './Header'
 import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
-import MeetUsersGM from './MeetUserGM'
+import { useEffect, useState } from 'react'
+
+import UserCard from './UserCard'
 
 const MeetUsers = () => {
   const navigate = useNavigate()
+  const [currentUser, setCurrentUser] = useState({})
+  const [prospect, setProspect] = useState({})
   
   useEffect(() => {
     if (localStorage.getItem('user_active') == 'false') {
       navigate('/');
     }
   }, []);
+
+  useEffect(() => {
+    fetch(`/current`)
+      .then(res => res.json())
+      .then(data => setCurrentUser(data))
+  }, [])
+
+  const swipe = () => {
+    alert('swiped!')
+  }
+
+  const reject = () => {
+    alert('rejected!')
+  }
   
   const title = 'MEET USERS'
   return (
@@ -19,8 +36,7 @@ const MeetUsers = () => {
       <Header title={title} />
       <NavBar />
       <div className='content'>
-        <h1>Content goes here.</h1>
-        <MeetUsersGM />
+        <UserCard user={currentUser} swipe={swipe} reject={reject}/>
       </div>
     </div>
   )

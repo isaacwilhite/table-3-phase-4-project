@@ -76,12 +76,24 @@ const Profile = () => {
             <input id='name_input' className='loginInput' type='text' onChange={handleChange} placeholder="Enter Name"></input>
             <label htmlFor='age_input'>Age:</label>
             <input id='age_input' className='loginInput' type='number' onChange={handleChange} placeholder="Enter Age"></input>
-            <label htmlFor='zipcode_input'>Zipcode:</label>
-            <input id='zipcode_input' className='loginInput' type='text' onChange={handleChange} placeholder="Enter Zip Code"></input>
+            <label htmlFor='location_input'>My Location:</label>
+            <select id='location_input' className='loginInput' onChange={handleChange} placeholder="Enter Zip Code">
+              <option value=''>Select Your City</option>
+              <option value='Los Angeles'>Los Angeles</option>
+              <option value='Denver'>Denver</option>
+              <option value='Portland'>Portland</option>
+            </select>
             <label htmlFor='bio_input'>Bio:</label>
             <input id='bio_input' className='loginInput' type='text' onChange={handleChange} placeholder="Enter Bio"></input>
             <label htmlFor='photo_input'>Photo:</label>
             <input id='photo_input' className='loginInput' type='text' onChange={handleChange} placeholder="Enter Image URL"></input>
+            <label htmlFor='preference_input'>Preference:</label>
+            <select id='preference_input' className='loginInput' onChange={handleChange} placeholder="Enter Zip Code">
+              <option value=''>Select Preference</option>
+              <option value='male'>Male</option>
+              <option value='female'>Female</option>
+              <option value='nonbinary'>Nonbinary</option>
+            </select>
           </form>
           <div>
             <button className='modalbutton' onClick={() => navigate('/')}>Cancel</button>
