@@ -141,6 +141,7 @@ button#deleteProfile:hover {
   grid-row: span 4;
   grid-column: span 4;
   padding: 3rem 3rem 3rem 3rem;
+  min-height: 600px;
   color: #654321;
   font-family: Georgia, 'Times New Roman', Times, serif;
 }
