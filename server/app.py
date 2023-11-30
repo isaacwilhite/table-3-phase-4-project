@@ -43,9 +43,7 @@ class CreateUser(Resource):
                 preference = '',
                 profile_picture = '',
                 location = '',
-                location_range = 0,
                 bio = '',
-                interests = '',
             )
             new_item.password_hash = new_data['password']
             db.session.add(new_item)    

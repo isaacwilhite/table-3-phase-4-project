@@ -29,9 +29,7 @@ class User(db.Model, SerializerMixin):
     preference = db.Column(db.String, nullable=False)
     profile_picture = db.Column(db.String)
     location = db.Column(db.String, nullable=False)
-    location_range = db.Column(db.Integer)
     bio = db.Column(db.String)
-    interests = db.Column(db.String)
 
     pending_sent_connections = db.relationship(
         'User', secondary = user_connections,
