@@ -56,8 +56,10 @@ const Profile = () => {
       },
       body: JSON.stringify(data)
     })
-    .then(res => res.json())
-    .then(data => console.log(data))
+    .then(() =>{
+      alert('Profile updated!')
+      navigate('/userhome')
+    })
   }
 
   const title = 'YOUR PROFILE'
