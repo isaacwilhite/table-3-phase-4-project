@@ -18,6 +18,15 @@ app.secret_key = os.environ.get("APP_SECRET")
 
 # Views go here!
 
+class CurrentUser(Resource):
+    def get(self):
+        try:
+            id = session['current_user']
+            selected = db.session.get(User, int(id))
+            return make_response(selected.to_dict(rules=('-_password_hash',)), 200)
+        except Exception:
+            return make_response({"Error": "User does not exist."}, 404)
+
 class CreateUser(Resource):
     def post(self):
         try:
@@ -37,15 +46,12 @@ class CreateUser(Resource):
                 location_range = 0,
                 bio = '',
                 interests = '',
-                swiped = '',
-                rejected = '',
-                friends = ''
             )
             new_item.password_hash = new_data['password']
             db.session.add(new_item)    
             db.session.commit()
             session['current_user'] = new_item.id
-            return make_response(new_item.to_dict(), 201)
+            return make_response(new_item.to_dict(rules=('-_password_hash')), 201)
         except:
             db.session.rollback()
             return make_response({'Error' : 'Could not create new user.'}, 400)
@@ -72,8 +78,7 @@ class LoginUser(Resource):
             return make_response({"Error" : "Invalid credentials."}, 422)
         
         session['current_user'] = selected.id
-    
-        return selected.to_dict(rules=('-connections.user', '-events.users')), 200
+        return selected.to_dict(rules=('-_password_hash', '-connections.user', '-events.users')), 200
     
 class LogoutUser(Resource):
     def get(self):
@@ -83,7 +88,7 @@ class LogoutUser(Resource):
 class Users(Resource):
     def get(self):
         try:
-            users = [user.to_dict() for user in User.query]
+            users = [user.to_dict(rules=('-_password_hash',)) for user in User.query]
             return make_response(users, 200)
         except Exception:
             return make_response({'Error' : 'Could not fetch user data.'}, 400)
@@ -103,7 +108,7 @@ class UsersById(Resource):
     def get(self, id):
         try:
             selected = db.session.get(User, id)
-            return make_response(selected.to_dict(), 200)
+            return make_response(selected.to_dict(rules=('-_password_hash',)), 200)
         except Exception:
             return make_response({"Error": "User does not exist."}, 404)
         
@@ -115,7 +120,7 @@ class UsersById(Resource):
                     setattr(selected, k, new_data[k])
                 db.session.add(selected)
                 db.session.commit()
-                return make_response(selected.to_dict(), 202)
+                return make_response(selected.to_dict(rules=('-_password_hash',)), 202)
             except Exception:
                 db.session.rollback()
                 return make_response({'Error' : 'Unable to update user.'}, 400)
@@ -198,6 +203,7 @@ class UserEvents(Resource):
 
 
 
+api.add_resource(CurrentUser, '/current')
 api.add_resource(LoginUser, '/login')
 api.add_resource(CreateUser, '/signup')
 api.add_resource(LogoutUser, '/logout')

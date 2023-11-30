@@ -8,6 +8,13 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from config import db, bcrypt
 from datetime import datetime
 
+user_connections = db.Table(
+    'user_connections',
+    db.Column('user1', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('user2', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('status', db.String, default='pending')
+)
+
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
@@ -25,9 +32,27 @@ class User(db.Model, SerializerMixin):
     location_range = db.Column(db.Integer)
     bio = db.Column(db.String)
     interests = db.Column(db.String)
-    swiped = db.Column(db.String)
-    rejected = db.Column(db.String)
-    friends = db.Column(db.String)
+
+    pending_sent_connections = db.relationship(
+        'User', secondary = user_connections,
+        primaryjoin=(id == user_connections.c.user1) & (user_connections.c.status == 'pending'),
+        secondaryjoin=(id == user_connections.c.user2) & (user_connections.c.status == 'pending'),
+        backref = 'pending_received_connections'
+    )
+
+    accepted_sent_connections = db.relationship(
+        'User', secondary = user_connections,
+        primaryjoin=(id == user_connections.c.user1) & (user_connections.c.status == 'accepted'),
+        secondaryjoin=(id == user_connections.c.user2) & (user_connections.c.status == 'accepted'),
+        backref = 'accepted_received_connections'
+    )
+
+    rejected_sent_connections = db.relationship(
+        'User', secondary = user_connections,
+        primaryjoin=(id == user_connections.c.user1) & (user_connections.c.status == 'rejected'),
+        secondaryjoin=(id == user_connections.c.user2) & (user_connections.c.status == 'rejected'),
+        backref = 'rejected_received_connections'
+    )
 
     connections = db.relationship('Connection', back_populates='user')
 
