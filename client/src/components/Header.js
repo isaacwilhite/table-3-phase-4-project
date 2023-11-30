@@ -3,7 +3,7 @@ const Header = ({title}) => {
   const navigate = useNavigate()
 
   const handleLogout = () => {
-    fetch(`${fetchUrl}/logout`)
+    fetch(`/logout`)
       .then(() => {
         localStorage.setItem('user_active', 'false')
         navigate('/')

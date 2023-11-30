@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, LoadScript, Autocomplete, Marker, InfoWindow } from '@react-google-maps/api';
-const fetchUrl = 'http://127.0.0.1:5555'
 const libraries = ['places'];
 
 const GoogleMapsComponent = () => {
@@ -22,7 +21,7 @@ const GoogleMapsComponent = () => {
 
   const fetchUserInfo = async () => {
     try {
-      const response = await fetch(`${fetchUrl}/active-user`);
+      const response = await fetch(`/active-user`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
