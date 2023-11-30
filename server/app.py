@@ -116,7 +116,10 @@ class UsersById(Resource):
         if selected := db.session.get(User, id):
             try:
                 new_data = request.get_json()
+                ipdb.set_trace()
                 for k in new_data:
+                    if new_data[k] == '' or new_data[k] == 0:
+                        continue
                     setattr(selected, k, new_data[k])
                 db.session.add(selected)
                 db.session.commit()
