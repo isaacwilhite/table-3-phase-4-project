@@ -15,17 +15,6 @@ user_connections = db.Table(
     db.Column('status', db.String, default='pending')
 )
 
-
-# update_statement = (
-#     update(connection_table)
-#     .where((connection_table.c.sender_id == sender_id) & (connection_table.c.receiver_id == receiver_id))
-#     .values(status=new_status)
-# )
-
-# # Execute the update statement
-# db.session.execute(update_statement)
-# db.session.commit()
-
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
@@ -43,9 +32,6 @@ class User(db.Model, SerializerMixin):
     location_range = db.Column(db.Integer)
     bio = db.Column(db.String)
     interests = db.Column(db.String)
-    swiped = db.Column(db.String)
-    rejected = db.Column(db.String)
-    friends = db.Column(db.String)
 
     pending_sent_connections = db.relationship(
         'User', secondary = user_connections,
