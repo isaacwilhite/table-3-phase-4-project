@@ -6,7 +6,6 @@ import { useEffect , useState } from 'react'
 const Connections = () => {
   const navigate = useNavigate()
   const [mutualSwipes, setMutualSwipes] = useState([])
-  const [mappedData, setMappedData] = useState([])
 
   useEffect(() => {
     if (localStorage.getItem('user_active') == 'false') {

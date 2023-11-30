@@ -5,7 +5,8 @@ import Login from './Login';
 import UserHome from './UserHome';
 import MeetUsers from './MeetUsers';
 import Connections from './Connections';
-import Events from './Events';
+import CreateEvent from './CreateEvent';
+import MyEvents from './MyEvents'
 import Profile from './Profile';
 import Error from './Error';
 
@@ -18,7 +19,8 @@ function Router() {
       <Route path='/userhome' element={<UserHome/>} />,
       <Route path='/meetusers' element={<MeetUsers/>} />,
       <Route path='/connections' element={<Connections/>} />,
-      <Route path='/events' element={<Events/>} />,
+      <Route path='/createevent' element={<CreateEvent/>} />,
+      <Route path='/myevents' element={<MyEvents/>} />,
       <Route path='/profile' element={<Profile/>} />
     </>
   )

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 
-const Events = () => {
+const CreateEvent = () => {
   const navigate = useNavigate()
   const [mutualSwipes, setMutualSwipes] = useState([])
   const [currentUser, setCurrentUser] = useState({})
@@ -130,4 +130,4 @@ const Events = () => {
   )
 }
 
-export default Events;
+export default CreateEvent;
