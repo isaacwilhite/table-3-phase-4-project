@@ -55,19 +55,6 @@ class CreateUser(Resource):
         except:
             db.session.rollback()
             return make_response({'Error' : 'Could not create new user.'}, 400)
-        
-class ActiveUser(Resource):
-    def get(self):
-        try:
-            active_user_id = session.get('current_user')
-            if active_user_id is not None:
-                return make_response({'active_user_id': active_user_id}, 200)
-            else:
-                return make_response({'Error': 'No active user'}, 404)
-        except Exception as e:
-            return make_response({'Error': f'Error retrieving active user: {e}'}, 500)
-
-api.add_resource(ActiveUser, '/active-user')
 
 class LoginUser(Resource):
     def post(self):
@@ -202,9 +189,6 @@ class UserEvents(Resource):
                 return make_response({'Error' : 'Unable to delete event.'}, 400)
         return make_response({"Error": "Event does not exist."}, 404)
     
-
-
-
 api.add_resource(CurrentUser, '/current')
 api.add_resource(LoginUser, '/login')
 api.add_resource(CreateUser, '/signup')
