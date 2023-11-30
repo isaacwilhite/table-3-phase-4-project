@@ -127,7 +127,6 @@ class UsersById(Resource):
     
 class MakeConnection(Resource):
     def post(self):
-        ipdb.set_trace()
         try:
             new_data = request.get_json()
             new_item = Connection(**new_data)
@@ -135,7 +134,8 @@ class MakeConnection(Resource):
             db.session.add(new_item)    
             db.session.commit()
             return make_response(new_item.to_dict(), 201)
-        except ValueError:
+        except ValueError as e:
+            print(e)
             db.session.rollback()
             return make_response({'Error' : 'Could not create new connection.'}, 400)
 

@@ -165,7 +165,7 @@ class Connection(db.Model, SerializerMixin):
         return f"Connection #{self.id} for user #{self.user_id}"
 
     @validates('user_id')
-    def validate_event_id(self, _, value):
+    def validate_user_id(self, _, value):
         if not isinstance(value, int):
             raise ValueError('User Id must be an integer.')
         return value

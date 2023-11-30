@@ -50,7 +50,32 @@ const Events = () => {
         body: JSON.stringify(values, null, 2),
       })
       .then(res => res.json())
-      .then(data => setNewEvent(data))
+      .then(data => {
+        setNewEvent(data)
+        fetch('/connections', {
+          method: "POST",
+          headers: {
+            "Content-Type" : "application/json"
+          },
+          body : JSON.stringify({
+            "user_id": currentUser.id,
+            "event_id": newEvent.id
+          })
+        })
+        .then(() => {
+          fetch('/connections', {
+            method: "POST",
+            headers: {
+              "Content-Type" : "application/json"
+            },
+            body: JSON.stringify({
+              "user_id": +invitedId,
+              "event_id": newEvent.id
+            })
+          })
+          .catch(e => console.log(e))
+        })
+      })
     }
   })
   
