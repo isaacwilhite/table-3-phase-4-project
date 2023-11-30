@@ -50,36 +50,35 @@ const CreateEvent = () => {
         body: JSON.stringify(values, null, 2),
       })
       .then(res => res.json())
-      .then(data => {
-        // THIS HERE!!!
-        setNewEvent(() => data)
-        console.log(newEvent.id)
-        fetch('/connections', {
-          method: "POST",
-          headers: {
-            "Content-Type" : "application/json"
-          },
-          body : JSON.stringify({
-            "user_id": currentUser.id,
-            "event_id": newEvent.id
-          })
-        })
-        .then(() => {
-          fetch('/connections', {
-            method: "POST",
-            headers: {
-              "Content-Type" : "application/json"
-            },
-            body: JSON.stringify({
-              "user_id": +invitedId,
-              "event_id": newEvent.id
-            })
-          })
-          .catch(e => console.log(e))
+      .then(data => setNewEvent(data))
+    }
+  })  
+
+  useEffect(() => {
+    fetch('/connections', {
+      method: "POST",
+      headers: {
+        "Content-Type" : "application/json"
+      },
+      body : JSON.stringify({
+        "user_id": currentUser.id,
+        "event_id": newEvent.id
+      })
+    })
+    .then(() => {
+      fetch('/connections', {
+        method: "POST",
+        headers: {
+          "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+          "user_id": +invitedId,
+          "event_id": newEvent.id
         })
       })
-    }
-  })
+      .catch(e => console.log(e))
+    })
+  }, [newEvent])
   
   useEffect(() => {
     fetch('/mutualswipes')

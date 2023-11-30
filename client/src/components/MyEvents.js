@@ -30,7 +30,9 @@ const MyEvents = () => {
         "Content-Type": "application/json"
       }
     })
-    .then(() => navigate('/myevents'))
+    .then(() => {
+      navigate('/loading')
+    })
   }
 
   const eventCards = allEvents.map((item, idx) => {

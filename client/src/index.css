@@ -383,3 +383,7 @@ form button:hover {
 .eventCard div {
   margin-top: 1rem;
 }
+
+#loading {
+  font-size: 3rem;
+}

@@ -9,6 +9,7 @@ import CreateEvent from './CreateEvent';
 import MyEvents from './MyEvents'
 import Profile from './Profile';
 import Error from './Error';
+import Loading from './Loading';
 
 function Router() {
   const routes = (
@@ -22,6 +23,7 @@ function Router() {
       <Route path='/createevent' element={<CreateEvent/>} />,
       <Route path='/myevents' element={<MyEvents/>} />,
       <Route path='/profile' element={<Profile/>} />
+      <Route path='/loading' element={<Loading/>} />
     </>
   )
   return (
