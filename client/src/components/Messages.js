@@ -1,5 +1,6 @@
 import NavBar from './NavBar'
 import Header from './Header'
+import Chat from './Chat'
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 
@@ -18,7 +19,9 @@ const Messages = () => {
       <Header title={title} />
       <NavBar />
       <div className='content'>
-        <h1>Content goes here.</h1>
+        <h1>
+          <Chat />
+        </h1>
       </div>
     </div>
   )

@@ -1,22 +1,33 @@
 #!/usr/bin/env python3
 
 # Remote library imports
-from flask import Flask, request, make_response, session
-from flask_restful import Resource, Api
+from flask import Flask, request, make_response, session, jsonify
 import ipdb
+from flask_socketio import SocketIO
+
 
 # Local imports
-from config import app, db, api
+from config import app, db, api, Resource
 
 # Add your model imports
-from models import User, Connection, Event
+from models import User, Connection, Event, Message
 import os, secrets
 from dotenv import load_dotenv
 
 load_dotenv()
 app.secret_key = os.environ.get("APP_SECRET")
+socketio = SocketIO(app)
 
 # Views go here!
+
+class CurrentUser(Resource):
+    def get(self):
+        try:
+            id = session['current_user']
+            selected = db.session.get(User, int(id))
+            return make_response(selected.to_dict(rules=('-_password_hash',)), 200)
+        except Exception:
+            return make_response({"Error": "User does not exist."}, 404)
 
 class CreateUser(Resource):
     def post(self):
@@ -37,15 +48,12 @@ class CreateUser(Resource):
                 location_range = 0,
                 bio = '',
                 interests = '',
-                swiped = '',
-                rejected = '',
-                friends = ''
             )
             new_item.password_hash = new_data['password']
             db.session.add(new_item)    
             db.session.commit()
             session['current_user'] = new_item.id
-            return make_response(new_item.to_dict(), 201)
+            return make_response(new_item.to_dict(rules=('-_password_hash')), 201)
         except:
             db.session.rollback()
             return make_response({'Error' : 'Could not create new user.'}, 400)
@@ -59,8 +67,7 @@ class LoginUser(Resource):
             return make_response({"Error" : "Invalid credentials."}, 422)
         
         session['current_user'] = selected.id
-    
-        return selected.to_dict(rules=('-connections.user', '-events.users')), 200
+        return selected.to_dict(rules=('-_password_hash', '-connections.user', '-events.users')), 200
     
 class LogoutUser(Resource):
     def get(self):
@@ -70,7 +77,7 @@ class LogoutUser(Resource):
 class Users(Resource):
     def get(self):
         try:
-            users = [user.to_dict() for user in User.query]
+            users = [user.to_dict(rules=('-_password_hash',)) for user in User.query]
             return make_response(users, 200)
         except Exception:
             return make_response({'Error' : 'Could not fetch user data.'}, 400)
@@ -90,7 +97,7 @@ class UsersById(Resource):
     def get(self, id):
         try:
             selected = db.session.get(User, id)
-            return make_response(selected.to_dict(), 200)
+            return make_response(selected.to_dict(rules=('-_password_hash',)), 200)
         except Exception:
             return make_response({"Error": "User does not exist."}, 404)
         
@@ -102,7 +109,7 @@ class UsersById(Resource):
                     setattr(selected, k, new_data[k])
                 db.session.add(selected)
                 db.session.commit()
-                return make_response(selected.to_dict(), 202)
+                return make_response(selected.to_dict(rules=('-_password_hash',)), 202)
             except Exception:
                 db.session.rollback()
                 return make_response({'Error' : 'Unable to update user.'}, 400)
@@ -181,7 +188,35 @@ class UserEvents(Resource):
                 db.session.rollback()
                 return make_response({'Error' : 'Unable to delete event.'}, 400)
         return make_response({"Error": "Event does not exist."}, 404)
+    
+class SendMessages(Resource):
+    def post(self):
+        data = request.get_json()
 
+        new_message = Message(
+            sender_id=data['sender_id'],
+            receiver_id=data['receiver_id'],
+            content=data['content']
+        )
+
+        db.session.add(new_message)
+        db.session.commit()
+
+
+        socketio.emit('new_message', {'message': {'id': new_message.id, 'content': new_message.content, 'timestamp': new_message.timestamp}}, room=f"user_{data['sender_id']}")
+        socketio.emit('new_message', {'message': {'id': new_message.id, 'content': new_message.content, 'timestamp': new_message.timestamp}}, room=f"user_{data['receiver_id']}")
+
+        return jsonify({'message': 'Message sent successfully'}), 201
+class MessagesById(Resource):
+    def get(self, id):
+        messages = Message.query.filter((Message.sender_id == id) | (Message.receiver_id == id)).all()
+
+        serialized_messages = [{'id': message.id, 'content': message.content, 'timestamp': message.timestamp} for message in messages]
+
+        return jsonify({'messages': serialized_messages})
+
+api.add_resource(SendMessages, '/messages')
+api.add_resource(MessagesById, '/messages/<int:id>')
 api.add_resource(LoginUser, '/login')
 api.add_resource(CreateUser, '/signup')
 api.add_resource(LogoutUser, '/logout')
@@ -192,5 +227,20 @@ api.add_resource(UserConnections, '/connections/<int:id>')
 api.add_resource(MakeEvent, '/events')
 api.add_resource(UserEvents, '/events/<int:id>')
 
+@socketio.on('send_message')
+def handle_send_message(data):
+    new_message = Message(
+        sender_id=data['sender_id'],
+        receiver_id=data['receiver_id'],
+        content=data['content']
+    )
+
+    db.session.add(new_message)
+    db.session.commit()
+
+    # Broadcast the new message to both sender and receiver
+    socketio.emit('new_message', {'message': {'id': new_message.id, 'content': new_message.content, 'timestamp': new_message.timestamp}}, room=f"user_{data['sender_id']}")
+    socketio.emit('new_message', {'message': {'id': new_message.id, 'content': new_message.content, 'timestamp': new_message.timestamp}}, room=f"user_{data['receiver_id']}")
+
 if __name__ == '__main__':
-    app.run(port=5555, debug=True)
+    socketio.run(app, debug=True)
