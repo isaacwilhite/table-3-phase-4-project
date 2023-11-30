@@ -77,7 +77,6 @@ class Users(Resource):
             users = [user.to_dict(rules=('-_password_hash',)) for user in User.query]
             return make_response(users, 200)
         except Exception as e:
-            print(e)
             return make_response({'Error' : 'Could not fetch user data.'}, 400)
     
     def post(self):
@@ -199,20 +198,35 @@ class HandleSwipe(Resource):
             sender = User.query.get(sender_id)
             receiver = User.query.get(receiver_id)
             
-            sender.pending_sent_connections.append(receiver)
-            db.session.commit()
-            
-            if sender in receiver.pending_sent_connections:
-                db.session.execute(text(f"UPDATE user_connections set status = 'accepted' WHERE (user1={sender_id} AND user2={receiver_id})"))
-                db.session.execute(text(f"UPDATE user_connections set status = 'accepted' WHERE (user1={receiver_id} AND user2={sender_id})"))
+            if receiver not in sender.pending_sent_connections:
+                sender.pending_sent_connections.append(receiver)
                 db.session.commit()
+                
+                if sender in receiver.pending_sent_connections:
+                    db.session.execute(text(f"UPDATE user_connections set status = 'accepted' WHERE (user1={sender_id} AND user2={receiver_id})"))
+                    db.session.execute(text(f"UPDATE user_connections set status = 'accepted' WHERE (user1={receiver_id} AND user2={sender_id})"))
+                    db.session.commit()
 
         except Exception as e:
             print(e)
             db.session.rollback()
             raise Exception('Unable to process swipe.')
 
+class MutualSwipes(Resource):
+    def get(self):
+        current_id = session['current_user']
+        try:
+            users = db.session.execute(text(f"SELECT * FROM user_connections WHERE user1 = {current_id} OR user1 = {current_id}")).fetchall()
+            filtered = [tup[1] for tup in users if tup[2] == 'accepted']
+            self_removed = [id for id in filtered if id != current_id]
+            results = []
+            
+            for id in self_removed:
+                results.append(User.query.get(id).to_dict())
 
+            return make_response(results, 200)
+        except Exception as e:
+            return make_response({'Error' : 'Could not fetch user data.'}, 400)
 
 api.add_resource(CurrentUser, '/current')
 api.add_resource(LoginUser, '/login')
@@ -225,6 +239,7 @@ api.add_resource(UserConnections, '/connections/<int:id>')
 api.add_resource(MakeEvent, '/events')
 api.add_resource(UserEvents, '/events/<int:id>')
 api.add_resource(HandleSwipe, '/swipe')
+api.add_resource(MutualSwipes, '/mutualswipes')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
