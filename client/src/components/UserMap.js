@@ -62,33 +62,7 @@ const UserMap = ({user}) => {
     console.log('Slider Value:', event.target.value);
   };
 
-  // const onPlaceChanged = () => {
-  //   if (autocomplete !== null) {
-  //     const place = autocomplete.getPlace();
-  //     console.log('Place changed:', place);
   
-  //     if (place.geometry && place.geometry.location) {
-  //       setMarkerPosition({
-  //         lat: place.geometry.location.lat(),
-  //         lng: place.geometry.location.lng(),
-  //       });
-  //       setMarkerInfo({
-  //         title: place.name,
-  //         content: `Name: ${place.name}\nAddress: ${place.formatted_address}`,
-  //       });
-  
-  //       // Set the InfoWindow to open
-  //       setInfoWindow({
-  //         position: {
-  //           lat: place.geometry.location.lat(),
-  //           lng: place.geometry.location.lng(),
-  //         },
-  //         title: place.name,
-  //         content: `Name: ${place.name}\nAddress: ${place.formatted_address}`,
-  //       });
-  //     }
-  //   }
-  // };
 
   const onMarkerClick = (location) => {
     if (location && location.position) {
