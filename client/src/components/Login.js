@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
-const fetchUrl = 'http://127.0.0.1:5000'
+const fetchUrl = 'http://127.0.0.1:5555'
 
 const Login = () => {
   const navigate = useNavigate()

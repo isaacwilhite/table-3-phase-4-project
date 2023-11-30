@@ -16,15 +16,15 @@ if __name__ == '__main__':
 
     def create_users():
         users = []
-        for n in range(20):
+        for n in range(100):
             new_user = User(
                 name = fake.first_name(),
                 age = randint(18, 90),
                 email = fake.email(),
                 gender = rc(['male', 'female', 'nonbinary']),
                 preference = rc(['male', 'female', 'nonbinary']),
-                profile_picture = '',
-                location = fake.zipcode(),
+                profile_picture = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Fblank-profile-picture&psig=AOvVaw1c1M68k96PsFFD5PocPPmE&ust=1701390812723000&source=images&cd=vfe&ved=0CBIQjRxqFwoTCJDBvOq86oIDFQAAAAAdAAAAABAE",
+                location = fake.postcode(),
                 location_range = randint(1, 200),
                 bio = fake.sentence()
             )
