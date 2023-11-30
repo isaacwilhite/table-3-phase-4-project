@@ -66,7 +66,7 @@ const Profile = () => {
       <Header title={title} />
       <NavBar />
       <div className='content'>
-        <div className='modal'>
+        <div className='modal' id='profileModal'>
           <h1 className='modaltitle'>Update Profile!</h1>
           <h3 className='modaltag'>Please enter your information</h3>
           <form id='profileForm'>

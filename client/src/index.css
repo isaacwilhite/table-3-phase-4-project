@@ -58,12 +58,13 @@ input.loginInput {
   margin-left: 10%;
   margin-right: 10%;
   margin-top: 3rem;
+  margin-bottom: 3rem;
   grid-template-columns: repeat(1, 1fr);
   grid-template-rows: repeat(5, 1fr);
   background-color: #fff9ae;
   width: 80%;
   height: auto;
-  min-width: 750px;
+  min-width: 807px;
   max-width: 80%;
   border: 5px solid orange;
   border-radius: 10px;
@@ -120,10 +121,26 @@ button#logout:hover {
   background-color: #d8ffb1;
 }
 
+button#deleteProfile {
+  color: #301934;
+  background-color: #ffcccb;
+  font-size: 1.5rem;
+  font-family:'Courier New', Courier, monospace;
+  height: 3rem;
+  width: 18rem;
+  border-radius: 7px;
+  margin-right: 2rem;
+  margin-top: 4rem;
+}
+
+button#deleteProfile:hover {
+  background-color: #d8ffb1;
+}
+
 .content {
   grid-row: span 4;
   grid-column: span 4;
-  padding: 2rem 0 3rem 3rem;
+  padding: 2rem 3rem 3rem 3rem;
   color: #654321;
   font-family: Georgia, 'Times New Roman', Times, serif;
 }
@@ -133,6 +150,16 @@ button#logout:hover {
   height: 350px;
   object-fit: cover;
   border: 2px solid #654321;
+  border-radius: 10px;
+}
+
+#profileModal {
+  width: 500px;
+  height: 650px;
+  margin: auto;
+  margin-top: 3rem;
+  background-color: #fff9ae;
+  border: 5px solid #bd7e4a;
   border-radius: 10px;
 }
 
