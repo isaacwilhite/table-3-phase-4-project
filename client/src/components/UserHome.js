@@ -21,7 +21,9 @@ const UserHome = () => {
 
   const handleDelete = () => {
     const choice = prompt('Are you sure? There is no coming back from this!\nType YES to continue.')
-    if (choice.toLowerCase() == 'yes') {
+    if (!choice) {
+      return
+    } else if (choice.toLowerCase() == 'yes') {
       const id = currentUser.id
       fetch(`/users/${id}`, {
         method: "DELETE",
