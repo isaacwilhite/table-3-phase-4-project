@@ -5,10 +5,13 @@ import { useEffect, useState } from 'react'
 
 import UserCard from './UserCard'
 
+let index = 0;
+
 const MeetUsers = () => {
   const navigate = useNavigate()
   const [currentUser, setCurrentUser] = useState({})
-  const [prospect, setProspect] = useState({})
+  const [prospects, setProspects] = useState([])
+  const [currentProspect, setCurrentProspect] = useState({})
   
   useEffect(() => {
     if (localStorage.getItem('user_active') == 'false') {
@@ -20,14 +23,43 @@ const MeetUsers = () => {
     fetch(`/current`)
       .then(res => res.json())
       .then(data => setCurrentUser(data))
+      index = 0
   }, [])
 
-  const swipe = () => {
-    alert('swiped!')
+  useEffect(() => {
+    fetch('/users')
+      .then(res => res.json())
+      .then(data => {
+        setProspects(data)
+        setCurrentProspect(data[index])
+        index++
+        if (index == prospects.length) index = 0
+      })
+  }, [])
+
+  const swipe = (e) => {
+    index++
+    if (index >= prospects.length) {
+      alert("That's everyone for now! Nobody is left!")
+      navigate('/userhome')
+    }
+    fetch('/swipe', {
+      method: "POST",
+      headers: {
+        "Content-Type" : "application/json"
+      },
+      body: JSON.stringify({
+        "sender" : currentUser.id,
+        "receiver" : currentProspect.id
+      })
+    })
+    setCurrentProspect(prospects[index])
   }
 
-  const reject = () => {
-    alert('rejected!')
+  const reject = (e) => {
+    setCurrentProspect(prospects[index])
+    index++
+    if (index == prospects.length) index = 0
   }
   
   const title = 'MEET USERS'
@@ -36,7 +68,7 @@ const MeetUsers = () => {
       <Header title={title} />
       <NavBar />
       <div className='content'>
-        <UserCard user={currentUser} swipe={swipe} reject={reject}/>
+        <UserCard user={currentProspect} swipe={swipe} reject={reject}/>
       </div>
     </div>
   )

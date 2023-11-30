@@ -7,8 +7,8 @@ const UserCard = ({user, swipe, reject}) => {
       <h3 id='cardLocation'>Location: {user.location}</h3>
       <p id='cardBio'>{user.bio}</p>
       <div>
-          <button className='modalbutton' style={{color:'green', fontSize: '2rem'}} onClick={swipe} >✔</button>
-          <button className='modalbutton' style={{color:'red', fontSize: '2rem'}} onClick={reject}>✗</button>
+          <button name='yes' className='modalbutton' style={{color:'green', fontSize: '2rem'}} onClick={swipe} >✔</button>
+          <button name='no' className='modalbutton' style={{color:'red', fontSize: '2rem'}} onClick={reject}>✗</button>
         </div>
     </div>
   )

@@ -45,18 +45,11 @@ class User(db.Model, SerializerMixin):
         backref = 'accepted_received_connections'
     )
 
-    rejected_sent_connections = db.relationship(
-        'User', secondary = user_connections,
-        primaryjoin=(id == user_connections.c.user1) & (user_connections.c.status == 'rejected'),
-        secondaryjoin=(id == user_connections.c.user2) & (user_connections.c.status == 'rejected'),
-        backref = 'rejected_received_connections'
-    )
-
     connections = db.relationship('Connection', back_populates='user')
 
     events = association_proxy('connections', 'event')
 
-    serialize_rules = ('-connections.user', '-events.users')
+    serialize_rules = ('-connections.user', '-events.users', '-accepted_sent_connections', '-pending_sent_connections', '-rejected_sent_connections', '-pending_received_connections', '-rejected_received_connections', '-accepted_received_connections')
 
     def __repr__(self):
         return f"User #{self.id}: {self.email}"

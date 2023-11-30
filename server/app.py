@@ -12,6 +12,7 @@ from config import app, db, api
 from models import User, Connection, Event
 import os, secrets
 from dotenv import load_dotenv
+from sqlalchemy import text
 
 load_dotenv()
 app.secret_key = os.environ.get("APP_SECRET")
@@ -75,7 +76,8 @@ class Users(Resource):
         try:
             users = [user.to_dict(rules=('-_password_hash',)) for user in User.query]
             return make_response(users, 200)
-        except Exception:
+        except Exception as e:
+            print(e)
             return make_response({'Error' : 'Could not fetch user data.'}, 400)
     
     def post(self):
@@ -186,7 +188,32 @@ class UserEvents(Resource):
                 db.session.rollback()
                 return make_response({'Error' : 'Unable to delete event.'}, 400)
         return make_response({"Error": "Event does not exist."}, 404)
-    
+
+class HandleSwipe(Resource):
+    def post(self):
+        try:
+            swipe_data = request.get_json()
+            sender_id = swipe_data['sender']
+            receiver_id = swipe_data['receiver']
+
+            sender = User.query.get(sender_id)
+            receiver = User.query.get(receiver_id)
+            
+            sender.pending_sent_connections.append(receiver)
+            db.session.commit()
+            
+            if sender in receiver.pending_sent_connections:
+                db.session.execute(text(f"UPDATE user_connections set status = 'accepted' WHERE (user1={sender_id} AND user2={receiver_id})"))
+                db.session.execute(text(f"UPDATE user_connections set status = 'accepted' WHERE (user1={receiver_id} AND user2={sender_id})"))
+                db.session.commit()
+
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+            raise Exception('Unable to process swipe.')
+
+
+
 api.add_resource(CurrentUser, '/current')
 api.add_resource(LoginUser, '/login')
 api.add_resource(CreateUser, '/signup')
@@ -197,6 +224,7 @@ api.add_resource(MakeConnection, '/connections')
 api.add_resource(UserConnections, '/connections/<int:id>')
 api.add_resource(MakeEvent, '/events')
 api.add_resource(UserEvents, '/events/<int:id>')
+api.add_resource(HandleSwipe, '/swipe')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

@@ -140,7 +140,7 @@ button#deleteProfile:hover {
 .content {
   grid-row: span 4;
   grid-column: span 4;
-  padding: 2rem 3rem 3rem 3rem;
+  padding: 3rem 3rem 3rem 3rem;
   color: #654321;
   font-family: Georgia, 'Times New Roman', Times, serif;
 }
@@ -211,8 +211,8 @@ select#preference_input {
 }
 
 #cardImg {
-  width: 350px;
-  height: 350px;
+  width: 300px;
+  height: 300px;
   object-fit: cover;
   border: 2px solid #654321;
   border-radius: 10px;
