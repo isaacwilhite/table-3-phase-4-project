@@ -22,6 +22,7 @@ const MyEvents = () => {
       })
   }, [])
 
+  console.log(allEvents)
   const eventCards = allEvents.map((item, idx) => {
     return (
       <div>
@@ -35,7 +36,7 @@ const MyEvents = () => {
       <Header title={title} />
       <NavBar />
       <div className='content'>
-        <h1>Here are your active events!</h1>
+        {eventCards}
       </div>
     </div>
   )
