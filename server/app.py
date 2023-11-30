@@ -50,7 +50,7 @@ class CreateUser(Resource):
             db.session.add(new_item)    
             db.session.commit()
             session['current_user'] = new_item.id
-            return make_response(new_item.to_dict(rules=('-_password_hash')), 201)
+            return make_response(new_item.to_dict(rules=('-_password_hash',)), 201)
         except:
             db.session.rollback()
             return make_response({'Error' : 'Could not create new user.'}, 400)
@@ -127,9 +127,11 @@ class UsersById(Resource):
     
 class MakeConnection(Resource):
     def post(self):
+        ipdb.set_trace()
         try:
             new_data = request.get_json()
             new_item = Connection(**new_data)
+            
             db.session.add(new_item)    
             db.session.commit()
             return make_response(new_item.to_dict(), 201)
@@ -220,7 +222,7 @@ class MutualSwipes(Resource):
             filtered = [tup[1] for tup in users if tup[2] == 'accepted']
             self_removed = [id for id in filtered if id != current_id]
             results = []
-            
+
             for id in self_removed:
                 results.append(User.query.get(id).to_dict())
 

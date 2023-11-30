@@ -217,3 +217,78 @@ select#preference_input {
   border: 2px solid #654321;
   border-radius: 10px;
 }
+
+#userTiles {
+  height: auto;
+  width: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.userTile {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border: 4px solid #654321;
+  border-radius: 10px;
+}
+
+.userTile:hover {
+  border: 4px solid red;
+}
+
+#eventModal {
+  width: 700px;
+  height: auto;
+  border: 2px solid black;
+}
+
+.eventTile {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border: 4px solid #654321;
+  border-radius: 10px;
+}
+
+.eventTile:hover {
+  border: 4px solid red;
+}
+
+img.selected {
+  border: 4px solid red;
+}
+
+#eventForm {
+  margin-top: 2rem;
+  display: grid;
+  font-size: 1.2rem;
+}
+
+#eventForm input {
+  width: 18rem;
+  height: 1.5rem;
+  border-radius: 4px;
+  border: 2px solid #654321;
+  margin-bottom: 1rem;
+  margin-top: 0.4rem;
+}
+
+form button {
+  color: #301934;
+  background-color: #ffcccb;
+  font-size: 1.5rem;
+  font-family:'Courier New', Courier, monospace;
+  height: 3rem;
+  width: 14rem;
+  border-radius: 7px;
+  margin-top: 2rem;
+  margin: auto;
+}
+
+form button:hover {
+  background-color: #d8ffb1;
+  margin: auto;
+}
