@@ -8,6 +8,7 @@ const NavBar = () => {
         <li><a href='/meetusers'>Meet Users</a></li>
         <li><a href='/events'>Events</a></li>
         <li><a href='/messages'>Messages</a></li>
+        <li><a href='/usersnearme'>Map of Users</a></li>
       </ul>
     </nav>
   )

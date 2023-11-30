@@ -1,19 +1,21 @@
 
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, LoadScript, Autocomplete, Marker, InfoWindow } from '@react-google-maps/api';
-const fetchUrl = 'http://127.0.0.1:5555'
+import UserCard from './UserCard';
 const libraries = ['places'];
 
-const MeetUserGM = () => {
+const UserMap = ({user}) => {
   const containerStyle = {
-    marginLeft: "22px",
-    width: "92%",
+    margin: "0 auto", // Center the element horizontally
+    width: "80%",      // Set the width to 80% of the parent container
+    maxWidth: "600px", // Limit the maximum width to 600 pixels
     height: "400px",
     position: "relative",
     overflow: "hidden",
     borderRadius: "10px",
     marginBottom: "15px",
   };
+
 
   const center = {
     lat: 40.7128,
@@ -31,6 +33,24 @@ const MeetUserGM = () => {
   const [placesService, setPlacesService] = useState(null);
   const [sliderValue, setSliderValue] = useState(50);
   const [userLocations, setUserLocations] = useState([]);
+  const [prospects, setProspects] = useState([])
+  const [currentUser, setCurrentUser] = useState({})
+  const [currentProspect, setCurrentProspect] = useState({})
+
+  useEffect(() => {
+    fetch('/users')
+      .then(res => res.json())
+      .then(data => {
+        setProspects(data)
+      })
+  }, [])
+
+  useEffect(() => {
+    fetch(`/current`)
+      .then(res => res.json())
+      .then(data => setCurrentUser(data))
+  }, [])
+  
 
   const onLoad = (map) => {
     console.log('Map loaded:', map);
@@ -42,47 +62,62 @@ const MeetUserGM = () => {
     console.log('Slider Value:', event.target.value);
   };
 
-  const onPlaceChanged = () => {
-    if (autocomplete !== null) {
-      const place = autocomplete.getPlace();
-      console.log('Place changed:', place);
+  // const onPlaceChanged = () => {
+  //   if (autocomplete !== null) {
+  //     const place = autocomplete.getPlace();
+  //     console.log('Place changed:', place);
   
-      if (place.geometry && place.geometry.location) {
-        setMarkerPosition({
-          lat: place.geometry.location.lat(),
-          lng: place.geometry.location.lng(),
-        });
-        setMarkerInfo({
-          title: place.name,
-          content: `Name: ${place.name}\nAddress: ${place.formatted_address}`,
-        });
+  //     if (place.geometry && place.geometry.location) {
+  //       setMarkerPosition({
+  //         lat: place.geometry.location.lat(),
+  //         lng: place.geometry.location.lng(),
+  //       });
+  //       setMarkerInfo({
+  //         title: place.name,
+  //         content: `Name: ${place.name}\nAddress: ${place.formatted_address}`,
+  //       });
   
-        // Set the InfoWindow to open
-        setInfoWindow({
-          position: {
-            lat: place.geometry.location.lat(),
-            lng: place.geometry.location.lng(),
-          },
-          title: place.name,
-          content: `Name: ${place.name}\nAddress: ${place.formatted_address}`,
-        });
-      }
-    }
-  };
+  //       // Set the InfoWindow to open
+  //       setInfoWindow({
+  //         position: {
+  //           lat: place.geometry.location.lat(),
+  //           lng: place.geometry.location.lng(),
+  //         },
+  //         title: place.name,
+  //         content: `Name: ${place.name}\nAddress: ${place.formatted_address}`,
+  //       });
+  //     }
+  //   }
+  // };
 
   const onMarkerClick = (location) => {
-    setInfoWindow({
-      position: location.position,
-      title: location.title,
-      content: location.content,
-    });
+    if (location && location.position) {
+      setCurrentProspect({
+        name: location.title || 'No Name',
+        bio: location.content || 'No Bio',
+        photo: location.photo || '',  // Make sure to provide a default value or handle this case
+        id: location.id || 'No ID',
+      });
+  
+      setInfoWindow({
+        position: location.position,
+        title: location.title || 'No Title',
+        content: location.content || 'No Content',
+        photo: location.photo || '',  // Make sure to provide a default value or handle this case
+        id: location.id || 'No ID',
+      });
+    }
+  
+  
+    // Assuming location contains information about the prospect
+    console.log(location)
+    console.log(currentProspect)
+    console.log(infoWindow)
   };  
 
   const onSearch = async (type) => {
     try {
-      // Replace 'YOUR_BACKEND_API_URL' with the actual URL of your backend API
       const response = await fetch(`/users`);
-      
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -108,8 +143,9 @@ const MeetUserGM = () => {
                     lng: preciseLocation.lng(),
                   },
                   title: user.name,
-                content: `Name: ${user.name}\nBio: ${user.bio}\nAddress: ${user.address}`,
-                profilePhoto: `${user.profile_picture}`,
+                  content: `Bio: ${user.bio}`,
+                  photo: `${user.profile_picture}`,
+                  id: user.id
               });
   
                 // Set the state to trigger a re-render and display the markers
@@ -133,7 +169,47 @@ const MeetUserGM = () => {
   };
 
 
+  const swipe = async (e) => {
+    if (prospects.length > 0) {
+      try {
+        const response = await fetch('/swipe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            sender: currentUser.id,
+            receiver: currentProspect.id,
+          }), 
+        });
   
+        // Assuming `infoWindow` is a function to close or clear the info window
+        setInfoWindow(null);
+  
+        alert("Connection request sent!");
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+  
+        // Set the next prospect
+        // const nextProspectIndex = (prospects.indexOf(currentProspect) + 1) % prospects.length;
+        // setCurrentProspect(prospects[nextProspectIndex]);
+      } catch (error) {
+        console.error('Error swiping:', error);
+        // Handle the error as needed
+      }
+    } else {
+      alert('No prospects available.');
+    }
+  };
+  
+
+  const reject = (e) => {
+    setCurrentProspect(prospects)
+    // index++
+    // if (index == prospects.length) index = 0
+  }
   
   
 
@@ -177,21 +253,26 @@ const MeetUserGM = () => {
                 key={index}
                 position={result.position}
                 title={result.title}
+                photo={result.photo}
                 onClick={() => onMarkerClick(result)}
+                
               />
             ))}
             {infoWindow && infoWindow.position && (
               <InfoWindow
-                position={{ lat: infoWindow.position.lat, lng: infoWindow.position.lng }}
-                onCloseClick={() => setInfoWindow(null)}
-              >
+              position={infoWindow.position}
+              onCloseClick={() => setInfoWindow(null)}
+            > 
+              <div className='mapUserCard'>
+                <img id='mapCardImg' src={infoWindow.photo} />
+                <h1 id='cardName'>{infoWindow.title}</h1>
+                <p id='cardBio'>{infoWindow.content}</p>
                 <div>
-                  <h2>{infoWindow.title}</h2>
-                  <img src={infoWindow.profilePhoto} alt="Profile" style={{ maxWidth: '100px', maxHeight: '100px' }} />
-                  <p>{infoWindow.content}</p>
-                  <button onClick={console.log()}>Add Match</button>
+                  <button name='yes' className='modalbutton' style={{ color: 'green', fontSize: '2rem' }} onClick={swipe} >✔</button>
+                  <button name='no' className='modalbutton' style={{ color: 'red', fontSize: '2rem' }} onClick={reject}>✗</button>
                 </div>
-              </InfoWindow>
+              </div>
+            </InfoWindow>
             )}
           </GoogleMap>
         </div>
@@ -201,4 +282,4 @@ const MeetUserGM = () => {
     </div>
   );
 };
-export default MeetUserGM;
+export default UserMap;

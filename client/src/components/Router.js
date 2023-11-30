@@ -11,6 +11,7 @@ import Events from './Events';
 import Profile from './Profile';
 import Error from './Error';
 import NewProfile from "./NewProfile";
+import UsersNearMe from "./UsersNearMe";
 
 function Router() {
   const routes = (
@@ -26,6 +27,7 @@ function Router() {
       <Route path='/events' element={<Events/>} />,
       <Route path='/newprofile' element={<NewProfile/>} />
       <Route path='/profile' element={<Profile/>} />
+      <Route path='/usersnearme' element={<UsersNearMe/>} />
     </>
   )
   return (

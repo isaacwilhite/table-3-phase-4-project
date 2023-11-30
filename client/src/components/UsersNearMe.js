@@ -1,50 +1,16 @@
-// import NavBar from './NavBar'
-// import Header from './Header'
-// import { useNavigate } from 'react-router-dom'
-// import { useEffect } from 'react'
-// import MeetUsersGM from './MeetUserGM'
-
-
-// const MeetUsers = () => {
-//   const navigate = useNavigate()
-  
-//   useEffect(() => {
-//     if (localStorage.getItem('user_active') == 'false') {
-//       navigate('/');
-//     }
-//   }, []);
-  
-//   const title = 'MEET USERS'
-//   return (
-//     <div className='container'>
-//       <Header title={title} />
-//       <NavBar />
-//       <div className='content'>
-//         <h1>Content goes here.</h1>
-//         <MeetUsersGM />
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default MeetUsers;
-
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import NavBar from './NavBar'
 import Header from './Header'
-import { useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import MeetUserGM from './MeetUserGM';
-
-import UserCard from './UserCard'
-
-let index = 0;
-
-const MeetUsers = () => {
+import { GoogleMap, LoadScript, Autocomplete, Marker, InfoWindow } from '@react-google-maps/api';
+import UserMap from './UserMap';
+const UsersNearMe = () => {
+  const title = "Users Map"
   const navigate = useNavigate()
   const [currentUser, setCurrentUser] = useState({})
   const [prospects, setProspects] = useState([])
   const [currentProspect, setCurrentProspect] = useState({})
-  
+  let index = 0;
   useEffect(() => {
     if (localStorage.getItem('user_active') == 'false') {
       navigate('/');
@@ -93,17 +59,15 @@ const MeetUsers = () => {
     index++
     if (index == prospects.length) index = 0
   }
-  
-  const title = 'MEET USERS'
-  return (
-    <div className='container'>
-      <Header title={title} />
+  return ( 
+  <div className='container'>
+      <Header title={title}/>
       <NavBar />
       <div className='content'>
-      <UserCard user={currentProspect} swipe={swipe} reject={reject}/>
+      <UserMap users={currentProspect} swipe={swipe} reject={reject}/>
       </div>
     </div>
-  )
+    )
 }
 
-export default MeetUsers;
+export default UsersNearMe
