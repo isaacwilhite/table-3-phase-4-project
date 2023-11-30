@@ -106,25 +106,25 @@ const CreateEvent = () => {
     <div className='container'>
       <Header title={title} />
       <NavBar />
-      <div className='content'>
+      <div className='createEventContent'>
+        <h2>Create an event for your new connections!</h2>
         <div id='userTiles'>
-          <h2>Create an event for you and your new connection!</h2>
           {mapped}
-          <form id='eventForm' onSubmit={formik.handleSubmit}>
-            <label htmlFor='name'>Name:</label>
-            <input id='name' name='name' onChange={formik.handleChange} value={formik.values.name} />
-            <label htmlFor='name'>Date:</label>
-            <input id='date' name='date' onChange={formik.handleChange} value={formik.values.date} />
-            <label htmlFor='time'>Time:</label>
-            <input id='time' name='time' onChange={formik.handleChange} value={formik.values.time} />
-            <label htmlFor='location'>Location:</label>
-            <input id='location' name='location' onChange={formik.handleChange} value={formik.values.location} />
-            <label htmlFor='details'>Details:</label>
-            <input id='details' name='details' onChange={formik.handleChange} value={formik.values.details} />
-            <br/>
-            <button type='submit'>Submit</button>
-          </form>
         </div>
+        <form id='eventForm' onSubmit={formik.handleSubmit}>
+          <label htmlFor='name'>Name:</label>
+          <input id='name' name='name' onChange={formik.handleChange} value={formik.values.name} />
+          <label htmlFor='name'>Date:</label>
+          <input id='date' name='date' onChange={formik.handleChange} value={formik.values.date} />
+          <label htmlFor='time'>Time:</label>
+          <input id='time' name='time' onChange={formik.handleChange} value={formik.values.time} />
+          <label htmlFor='location'>Location:</label>
+          <input id='location' name='location' onChange={formik.handleChange} value={formik.values.location} />
+          <label htmlFor='details'>Details:</label>
+          <input id='details' name='details' onChange={formik.handleChange} value={formik.values.details} />
+          <br/>
+          <button type='submit'>Submit</button>
+        </form>
       </div>
     </div>
   )

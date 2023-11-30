@@ -44,7 +44,7 @@ const UserHome = () => {
     <div className='container'>
       <Header title={title} />
       <NavBar />
-      <div className='content'>
+      <div className='homeContent'>
         <h1>{currentUser.name}'s Datesmith Homepage</h1>
         <img className='picture' src={currentUser.profile_picture} alt='user_photo'></img>
         <h2>Age: {currentUser.age}</h2>
