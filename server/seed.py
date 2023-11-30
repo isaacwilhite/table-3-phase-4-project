@@ -65,7 +65,7 @@ if __name__ == '__main__':
             name = 'Abe',
             age = 50,
             email = 'abe@fis.com',
-            gender = 'non',
+            gender = 'nonbinary',
             preference = 'male',
             profile_picture = 'https://images.pexels.com/photos/1300402/pexels-photo-1300402.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
             location = fake.zipcode(),
