@@ -10,6 +10,7 @@ import Messages from './Messages';
 import Events from './Events';
 import Profile from './Profile';
 import Error from './Error';
+import NewProfile from "./NewProfile";
 
 function Router() {
   const routes = (
@@ -23,6 +24,7 @@ function Router() {
       <Route path='/connections' element={<Connections/>} />,
       <Route path='/messages' element={<Messages/>} />,
       <Route path='/events' element={<Events/>} />,
+      <Route path='/newprofile' element={<NewProfile/>} />
       <Route path='/profile' element={<Profile/>} />
     </>
   )

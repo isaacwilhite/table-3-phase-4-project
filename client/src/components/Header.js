@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-
 const Header = ({title}) => {
   const navigate = useNavigate()
 

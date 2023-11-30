@@ -2,6 +2,7 @@ import NavBar from './NavBar'
 import Header from './Header'
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
+import MeetUsersGM from './MeetUserGM'
 
 const MeetUsers = () => {
   const navigate = useNavigate()
@@ -19,6 +20,7 @@ const MeetUsers = () => {
       <NavBar />
       <div className='content'>
         <h1>Content goes here.</h1>
+        <MeetUsersGM />
       </div>
     </div>
   )
