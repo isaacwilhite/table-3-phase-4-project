@@ -121,6 +121,17 @@ button#logout:hover {
 }
 
 .content {
-  grid-row: 2 / span 4;
-  grid-column: 2 span 4;
+  grid-row: span 4;
+  grid-column: span 4;
+  padding: 2rem 0 3rem 3rem;
+  color: #654321;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.picture {
+  width: 350px;
+  height: 350px;
+  object-fit: cover;
+  border: 2px solid #654321;
+  border-radius: 10px;
 }

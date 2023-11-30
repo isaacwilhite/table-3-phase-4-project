@@ -1,8 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
-const fetchUrl = 'http://127.0.0.1:5000'
-
 const Login = () => {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
@@ -23,7 +21,7 @@ const Login = () => {
       "email": email,
       "password": pass
     }
-    fetch(`${fetchUrl}/login`, {
+    fetch(`/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
