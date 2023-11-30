@@ -174,7 +174,7 @@ class MakeEvent(Resource):
 class UserEvents(Resource):
     def get(self, id):
         try:
-            results = [item.to_dict() for item in User.query.get(id).events if item != None]
+            results = [item.to_dict(rules=('-connections',)) for item in User.query.get(id).events if item != None]
             return make_response(results, 200)
         except Exception as e:
             print(e)

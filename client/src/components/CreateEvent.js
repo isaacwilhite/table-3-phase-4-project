@@ -41,8 +41,8 @@ const CreateEvent = () => {
       details: "",
     },
     validationSchema: formSchema,
-    onSubmit: (values) => {
-      fetch('/events', {
+    onSubmit: async (values) => {
+      await fetch('/events', {
         method: "POST",
         headers: {
           "Content-Type" : "application/json"
@@ -51,7 +51,9 @@ const CreateEvent = () => {
       })
       .then(res => res.json())
       .then(data => {
-        setNewEvent(data)
+        // THIS HERE!!!
+        setNewEvent(() => data)
+        console.log(newEvent.id)
         fetch('/connections', {
           method: "POST",
           headers: {
