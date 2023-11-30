@@ -4,7 +4,7 @@ import { GoogleMap, LoadScript, Autocomplete, Marker, InfoWindow } from '@react-
 const fetchUrl = 'http://127.0.0.1:5555'
 const libraries = ['places'];
 
-const GoogleMapsComponent = () => {
+const MeetUserGM = () => {
   const containerStyle = {
     marginLeft: "22px",
     width: "92%",
@@ -20,24 +20,6 @@ const GoogleMapsComponent = () => {
     lng: -74.0060,
   };
 
-  const fetchUserInfo = async () => {
-    try {
-      const response = await fetch(`${fetchUrl}/active-user`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-  
-      const userInfo = await response.json();
-      console.log('User Info:', userInfo);
-    } catch (error) {
-      console.error('Error fetching user information:', error);
-    }
-  };
-  
-  // Call this function wherever you need to fetch user information
-  fetchUserInfo();
-  
-
   const [autocomplete, setAutocomplete] = useState(null);
   const [markerPosition, setMarkerPosition] = useState(center);
   const [infoWindow, setInfoWindow] = useState(null);
@@ -48,14 +30,11 @@ const GoogleMapsComponent = () => {
   const [placesMarkers, setPlacesMarkers] = useState([]);
   const [placesService, setPlacesService] = useState(null);
   const [sliderValue, setSliderValue] = useState(50);
+  const [userLocations, setUserLocations] = useState([]);
 
   const onLoad = (map) => {
     console.log('Map loaded:', map);
     setPlacesService(new window.google.maps.places.PlacesService(map));
-  };
-
-  const onAutocompleteLoad = (autocomplete) => {
-    setAutocomplete(autocomplete);
   };
 
   const handleSliderChange = (event) => {
@@ -91,77 +70,77 @@ const GoogleMapsComponent = () => {
     }
   };
 
-  const onMarkerClick = (result) => {
+  const onMarkerClick = (location) => {
     setInfoWindow({
-      position: result.position,
-      title: result.title,
-      content: result.content,
+      position: location.position,
+      title: location.title,
+      content: location.content,
+      profilePhoto: location.profile_picture,
     });
   };
 
   const onSearch = async (type) => {
-    setPlacesMarkers([]);
-    const radiusInMeters = sliderValue * 1609.34;
+    try {
+      // Replace 'YOUR_BACKEND_API_URL' with the actual URL of your backend API
+      const response = await fetch(`${fetchUrl}/users`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
   
-    console.log('Slider Value:', sliderValue);
-    console.log('Radius:', sliderValue * 1609.34);
+      const data = await response.json();
   
-    if (placesService !== null) {
-      const request = {
-        query: type,
-        location: markerPosition,
-        radius: radiusInMeters,
-      };
+      if (data && data.length > 0) {
+        const userLocations = []; // Declare userLocations here
   
-      const fetchResults = (request) => {
-        placesService.textSearch(request, (results, status, pagination) => {
-          if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-            const newMarkers = results.map((result) => ({
-              position: {
-                lat: result.geometry.location.lat(),
-                lng: result.geometry.location.lng(),
-              },
-              title: result.name,
-              content: result.formatted_address,
-            }));
-            if (pagination.hasNextPage) {
-              pagination.nextPage();
-            }
-            setPlacesMarkers((prevMarkers) => [...prevMarkers, ...newMarkers]);
+        const geocoder = new window.google.maps.Geocoder();
   
-            
-          } else {
-            console.error('Text search failed:', status);
+        for (const user of data) {
+          if (user.location) {
+            // Geocode the user's address
+            geocoder.geocode({ address: user.location }, (results, status) => {
+              if (status === 'OK' && results.length > 0) {
+                const preciseLocation = results[0].geometry.location;
+                
+                // Add the user's precise location to the array
+                userLocations.push({
+                  position: {
+                    lat: preciseLocation.lat(),
+                    lng: preciseLocation.lng(),
+                  },
+                  title: user.name,
+                content: `Name: ${user.name}\nBio: ${user.bio}\nAddress: ${user.address}`,
+              });
+  
+                // Set the state to trigger a re-render and display the markers
+                setPlacesMarkers([...userLocations]);
+              } else {
+                console.error('Geocoding failed:', status);
+              }
+            });
           }
-        });
-      };
+        }
   
-      fetchResults(request);
+        // Now you can use userLocations here
+        console.log('User locations:', userLocations);
+        setUserLocations(userLocations);
+      } else {
+        console.error('No user locations found.');
+      }
+    } catch (error) {
+      console.error('Error fetching user locations:', error);
     }
   };
   
   
 
-  // useEffect((map) => {
-  //   if (placesService === null) {
-  //     setPlacesService(new window.google.maps.places.PlacesService(map));
-  //   }
-  // }, [placesService]);
+  useEffect(() => {
+  }, []);
 
   return (
-    <div className='map'>
+    <div className='meetmap'>
       <h1>My Map</h1>
-
-      <LoadScript
-        googleMapsApiKey="AIzaSyB7JeG6WXNJj3cId2QFAYYCRVx2yI6lnXA"
-        libraries={libraries} // Add any additional libraries you need
-      >
-        <Autocomplete onLoad={onAutocompleteLoad} onPlaceChanged={onPlaceChanged}>
-          <div className='searchbar'>
-            <input type="text" placeholder="Enter a location" />
-          </div>
-        </Autocomplete>
-        <div>
+      <div>
           <label htmlFor="rangeSlider">Select a radius:</label>
           <input
             type="range"
@@ -174,7 +153,14 @@ const GoogleMapsComponent = () => {
           />
           <p>Selected miles: {sliderValue}</p>
         </div>
-        <div className='map'>
+      <button onClick={onSearch}>Show Users in radius</button>
+      <LoadScript
+        googleMapsApiKey="AIzaSyB7JeG6WXNJj3cId2QFAYYCRVx2yI6lnXA"
+        libraries={libraries} // Add any additional libraries you need
+      >
+        
+        
+        <div >
           <GoogleMap
             mapContainerStyle={containerStyle}
             center={markerPosition}
@@ -198,30 +184,17 @@ const GoogleMapsComponent = () => {
               >
                 <div>
                   <h2>{infoWindow.title}</h2>
+                  <img src={infoWindow.profilePhoto} alt="Profile" style={{ maxWidth: '100px', maxHeight: '100px' }} />
                   <p>{infoWindow.content}</p>
-                  <button onClick={console.log()}>Add Place</button>
+                  <button>Add Match</button>
                 </div>
               </InfoWindow>
             )}
           </GoogleMap>
         </div>
-        <div className='placesbuttons'>
-          <button onClick={() => onSearch('restaurant')}>Search Restaurants</button>
-          <button onClick={() => onSearch('movie_theater')}>Search Movies</button>
-          <button onClick={() => onSearch('amusement_park')}>Search Amusement Parks</button>
-          <button onClick={() => onSearch('aquarium')}>Search Aquariums</button>
-          <button onClick={() =>onSearch('museum')}>Search Museums</button>
-          <button onClick={() =>onSearch('night_club')}>Search Night Clubs</button>
-          <button onClick={() => onSearch('aquarium')}>Search Aquariums</button>
-          <button onClick={() =>onSearch('museum')}>Search Museums</button>
-          <button onClick={() =>onSearch('night_club')}>Search Night Clubs</button>
-          {/* Add more buttons for other types */}
-        </div>
+        
       </LoadScript>
     </div>
   );
 };
-
-
-export default GoogleMapsComponent;
-
+export default MeetUserGM;

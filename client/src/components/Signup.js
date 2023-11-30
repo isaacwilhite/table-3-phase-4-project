@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
-const fetchUrl = 'http://127.0.0.1:5000'
+const fetchUrl = 'http://127.0.0.1:5555'
 
 const Signup = () => {
   const navigate = useNavigate()
-
+  
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
   const [confirmPass, setConfirmPass] = useState('')
@@ -42,6 +42,8 @@ const Signup = () => {
     .then((res) => {
       if (res.ok) {
         localStorage.setItem('user_active', 'true')
+        // localStorage.setItem('current_user', data.id)
+        // console.log('User ID stored in local storage:', data.id);
         navigate('/userhome')
       }
     })
