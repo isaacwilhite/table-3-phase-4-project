@@ -33,7 +33,6 @@ const UserHome = () => {
       })
       .then(() => alert('Account deleted! We wish you the best.'))
       .then(() => {
-        fetch('/logout')
         navigate('/')
       })
     }

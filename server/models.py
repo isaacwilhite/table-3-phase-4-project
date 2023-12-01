@@ -45,7 +45,7 @@ class User(db.Model, SerializerMixin):
         backref = 'accepted_received_connections'
     )
 
-    connections = db.relationship('Connection', back_populates='user')
+    connections = db.relationship('Connection', back_populates='user', cascade='all, delete-orphan')
 
     events = association_proxy('connections', 'event')
 

@@ -119,6 +119,7 @@ class UsersById(Resource):
             try:
                 db.session.delete(selected)
                 db.session.commit()
+                session['user_id'] = None
                 return make_response({}, 204)
             except Exception:
                 db.session.rollback()
