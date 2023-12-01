@@ -43,7 +43,6 @@ class ChatManager:
 
 chat_manager = ChatManager()
 
-
 class CurrentUser(Resource):
     def get(self):
         try:
@@ -199,19 +198,20 @@ class MakeEvent(Resource):
 class UserEvents(Resource):
     def get(self, id):
         try:
-            results = [item.to_dict() for item in User.query.get(id).events if item != None]
+            results = [item.to_dict(rules=('-connections',)) for item in User.query.get(id).events if item != None]
             return make_response(results, 200)
         except Exception as e:
             print(e)
             return make_response({'Error' : 'Could not fetch user events.'}, 400)
         
     def delete(self, id):
-        if selected := db.session.get(Event, id):
+        if selected := db.session.get(Event, int(id)):
             try:
                 db.session.delete(selected)
                 db.session.commit()
                 return make_response({'Message' : 'Event has been deleted.'}, 204)
-            except Exception:
+            except Exception as e:
+                print(e)
                 db.session.rollback()
                 return make_response({'Error' : 'Unable to delete event.'}, 400)
         return make_response({"Error": "Event does not exist."}, 404)
@@ -255,7 +255,7 @@ class MutualSwipes(Resource):
             return make_response(results, 200)
         except Exception as e:
             return make_response({'Error' : 'Could not fetch user data.'}, 400)
-        
+
 @socketio.on('message')
 def handle_message(data):
     sender_id = data['sender_id']

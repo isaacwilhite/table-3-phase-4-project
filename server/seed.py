@@ -439,6 +439,28 @@ if __name__ == '__main__':
         db.session.add_all(users)
         db.session.commit()
 
+def create_connection(user1, user2, status='accepted'):
+    connection = user_connections.insert().values(
+        user1=user1.id,
+        user2=user2.id,
+        status=status
+    )
+    db.session.execute(connection)
+    db.session.commit()
+
+def seed_data():
+    # Create some dummy users
+    users = [create_user() for _ in range(5)]
+    db.session.add_all(users)
+    db.session.commit()
+
+    # Establish connections between users (modify as needed)
+    create_connection(users[0], users[1])
+    create_connection(users[1], users[2])
+    create_connection(users[2], users[3])
+    create_connection(users[3], users[4])
+
+
     with app.app_context():
         print("Starting seed...")
         # Seed code goes here
