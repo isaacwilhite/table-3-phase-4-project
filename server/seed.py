@@ -435,6 +435,20 @@ if __name__ == '__main__':
 
         user30.password_hash = 'password'
         users.append(user30)
+        
+        user31 = User(
+            name = 'Tom',
+            age = 35,
+            email = 'tom@fis.com',
+            gender = 'male',
+            preference = 'female',
+            profile_picture = 'https://images.pexels.com/photos/886285/pexels-photo-886285.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+            location = 'Boston',
+            bio = "Ambitious professional with a love for personal growth, continuous learning, and setting and achieving goals. I believe in the importance of a growth mindset, the joy of pursuing passions, and the beauty of building a relationship that encourages and supports individual aspirations. Seeking a partner who shares a commitment to personal development, values mutual support, and is ready to embark on a journey of success, happiness, and shared achievements together."
+        )
+
+        user31.password_hash = 'password'
+        users.append(user30)
 
         db.session.add_all(users)
         db.session.commit()
