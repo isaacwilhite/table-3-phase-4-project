@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import AlertBar from './AlertBar'
 
 const Signup = () => {
   const navigate = useNavigate()
+  
   
 
   const [newUser, setNewUser] = useState({})
@@ -15,9 +16,11 @@ const Signup = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('');
+  
 
-
-
+  useEffect(() => {
+    setSnackbarOpen(false)
+  }, [])
 
   const formSchema = yup.object().shape({
     email: yup.string().required('Please enter your email').typeError('Please enter a string.'),
@@ -29,9 +32,16 @@ const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
+      confirmpassword: "",
     },
     validationSchema: formSchema,
     onSubmit: async (values) => {
+      if (values.password !== values.confirmpassword) {
+          setSnackbarMessage('Password must match.');
+          setSnackbarSeverity('error');
+          setSnackbarOpen(true);
+          return
+      }
       await fetch('/signup', {
         method: "POST",
         headers: {

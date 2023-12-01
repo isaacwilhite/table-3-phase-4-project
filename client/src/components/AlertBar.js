@@ -10,7 +10,7 @@ const AlertBar = ({ message, setAlertMessage, snackType, handleSnackType }) => {
   const [open, setOpen] = useState(true);
 
   useEffect(() => {
-    setOpen(true); // Reset the open state when the component receives new props
+    setOpen(false); // Reset the open state when the component receives new props
   }, [message]);
 
   const handleClose = (event, reason) => {

@@ -10,7 +10,9 @@ const UserHome = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('');
-
+  useEffect(() => {
+    setSnackbarOpen(false)
+  }, [])
 
   useEffect(() => {
     if (localStorage.getItem('user_active') == 'false') {

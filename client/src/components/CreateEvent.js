@@ -58,7 +58,7 @@ const CreateEvent = () => {
       .then(data => {
         setNewEvent(data)
         formik.resetForm();
-        alert("Event Has been created!")
+        // alert("Event Has been created!")
       })
       
 
