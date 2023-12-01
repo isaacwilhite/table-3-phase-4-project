@@ -134,7 +134,8 @@ if __name__ == '__main__':
             email = 'kim@fis.com',
             gender = 'female',
             preference = 'male',
-            profile_picture = 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',            location = 'Austin',
+            profile_picture = 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+            location = 'Austin',
             bio = "Fitness is my passion, and I believe in the power of a healthy mind and body. Currently working as a fitness instructor, I find fulfillment in helping others achieve their wellness goals. My ideal day involves a sunrise yoga session, a green smoothie, and unwinding with a good book. Seeking a partner who values health, enjoys an active lifestyle, and believes in the importance of balance."
         )
 

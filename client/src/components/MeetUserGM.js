@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, LoadScript, Autocomplete, Marker, InfoWindow } from '@react-google-maps/api';
+import AlertBar from './AlertBar'
 const fetchUrl = 'http://127.0.0.1:5555'
 const libraries = ['places'];
 
@@ -31,6 +32,9 @@ const MeetUserGM = () => {
   const [placesService, setPlacesService] = useState(null);
   const [sliderValue, setSliderValue] = useState(50);
   const [userLocations, setUserLocations] = useState([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+const [snackbarMessage, setSnackbarMessage] = useState('');
+const [snackbarSeverity, setSnackbarSeverity] = useState('');
 
   const onLoad = (map) => {
     console.log('Map loaded:', map);

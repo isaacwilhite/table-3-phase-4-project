@@ -2,23 +2,31 @@ import NavBar from './NavBar'
 import Header from './Header'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import AlertBar from './AlertBar'
+
 
 
 const Profile = () => {
   const navigate = useNavigate()
   const [currentUser, setCurrentUser] = useState({})
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('');
   
   useEffect(() => {
-    if (localStorage.getItem('user_active') == 'false') {
+    if (localStorage.getItem('user_active') === 'false') {
       navigate('/');
     }
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     fetch(`/current`)
       .then(res => res.json())
       .then(data => setCurrentUser(data))
-  }, [])
+      .catch(error => {
+        setSnackbarMessage(`Error fetching user data: ${error.message}`);
+        setSnackbarSeverity('error');
+      });
+  }, []);
 
   const [name, setName] = useState('')
   const [age, setAge] = useState('')
@@ -40,31 +48,46 @@ const Profile = () => {
     }
   }
 
-  const handleUpdate = (e) => {
-    const id = currentUser.id
+  const handleUpdate = () => {
+    const id = currentUser.id;
     const data = {
+
       "name": name,
       "age": +age,
       "location": location,
       "bio": bio,
       "profile_picture": imageUrl
     }
+
     fetch(`/users/${id}`, {
       method: 'PATCH',
       headers: {
-        "Content-Type" : "application/json"
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     })
-    .then(() =>{
-      alert('Profile updated!')
-      navigate('/userhome')
-    })
-  }
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error updating profile: ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(() => {
+        setSnackbarMessage('Profile updated!');
+        setSnackbarSeverity('success');
+        // Optionally, you can redirect or perform other actions here.
+        navigate('/userhome');
+      })
+      .catch((error) => {
+        setSnackbarMessage(`Error updating profile: ${error.message}`);
+        setSnackbarSeverity('error');
+      });
+  };
 
   const title = 'YOUR PROFILE'
   return (
     <div className='container'>
+      
       <Header title={title} />
       <NavBar />
       <div className='profileContent'>
@@ -90,9 +113,15 @@ const Profile = () => {
               <option value='nonbinary'>Nonbinary</option>
             </select>
           </form>
-          <div>
+          <div id='loginButtons'>
             <button className='modalbutton' onClick={() => navigate('/')}>Cancel</button>
             <button className='modalbutton' onClick={handleUpdate}>Submit</button>
+            <AlertBar
+          message={snackbarMessage}
+          setAlertMessage={setSnackbarMessage}
+          snackType={snackbarSeverity}
+          handleSnackType={setSnackbarSeverity}
+        />
           </div>
         </div>
       </div>

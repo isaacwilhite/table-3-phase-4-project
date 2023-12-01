@@ -16,6 +16,14 @@ body {
   border-radius: 10px;
 }
 
+#formikLogin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 300px;
+}
+
 .modaltitle {
   font-family: Georgia, 'Times New Roman', Times, serif;
   color: #654321;
@@ -25,6 +33,14 @@ body {
 .modaltag {
   font-family: Georgia, 'Times New Roman', Times, serif;
   color: #654321;
+  text-align: center;
+}
+
+div#loginButtons {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  margin-top: 1.2rem;
 }
 
 .modalbutton {
@@ -35,7 +51,10 @@ body {
   height: 3rem;
   width: 8rem;
   border-radius: 7px;
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
 }
 
 .modalbutton:hover {
@@ -418,12 +437,6 @@ select#preference_input {
   border: 2px solid #654321;
   margin-bottom: 1rem;
   margin-top: 0.4rem;
-}
-
-.userCard {
-  display: flex;
-  margin-bottom: 15px;
-  overflow: scroll;
 }
 
 .mapUserCard {
