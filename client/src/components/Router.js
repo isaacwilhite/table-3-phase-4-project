@@ -9,6 +9,8 @@ import CreateEvent from './CreateEvent';
 import MyEvents from './MyEvents'
 import Profile from './Profile';
 import Error from './Error';
+import UsersNearMe from "./UsersNearMe";
+
 import Loading from './Loading';
 
 function Router() {
@@ -23,7 +25,11 @@ function Router() {
       <Route path='/createevent' element={<CreateEvent/>} />,
       <Route path='/myevents' element={<MyEvents/>} />,
       <Route path='/profile' element={<Profile/>} />
+
+      <Route path='/usersnearme' element={<UsersNearMe/>} />
+
       <Route path='/loading' element={<Loading/>} />
+
     </>
   )
   return (
