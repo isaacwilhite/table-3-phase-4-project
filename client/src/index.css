@@ -51,6 +51,10 @@ div#loginButtons {
   height: 3rem;
   width: 8rem;
   border-radius: 7px;
+<<<<<<< HEAD
+
+=======
+>>>>>>> main
 }
 
 .modalbutton:hover {
@@ -286,7 +290,10 @@ select#preference_input {
 }
 
 #userTiles {
-  height: auto;
+  
+  display: inline;
+  max-height: fit-content;
+  height: 200px;
   width: auto;
   display: flex;
   flex-wrap: wrap;
@@ -294,12 +301,26 @@ select#preference_input {
   gap: 1rem;
 }
 
-.userTile {
+.connectionUserTile {
   width: 200px;
   height: 200px;
   object-fit: cover;
   border: 4px solid #654321;
   border-radius: 10px;
+}
+#eventUserTiles {
+  margin-bottom: 55px;
+  display: flex;
+  overflow-x: scroll;
+  width: 591px;
+  overflow: auto;
+
+ 
+}
+
+.eventTileImg {
+  width: 119px;
+  height: 100px;
 }
 
 .userTile:hover {
@@ -329,7 +350,6 @@ img.selected {
 }
 
 #eventForm {
-  margin-top: 2rem;
   display: grid;
   font-size: 1.2rem;
 }
@@ -362,6 +382,15 @@ form button:hover {
 
 
 /* ----------------------------------map-css-start--------------------------------------- */
+
+.signupInput {
+  display: grid;
+  justify-content: space-around;
+}
+
+.signup {
+  margin-top: 10px
+}
 
 .searchbar {
 
@@ -416,8 +445,8 @@ select#preference_input {
 #mapCardImg {
   height: 120px;
   width: auto;
-
-  flex-direction: column;
+  border-radius: 10px; 
+  /* flex-direction: column;
   background-color: #ece6ff;
   align-items: center;
   justify-content: center;
@@ -425,7 +454,7 @@ select#preference_input {
   height: 700px;
   border: 2px solid #654321;
   padding: 3rem 2rem 3rem 2rem;
-  border-radius: 10px;
+  border-radius: 10px; */
 }
 
 #cardImg {
@@ -443,10 +472,12 @@ select#preference_input {
   flex-wrap: wrap;
   justify-content: center;
   gap: 1rem;
+  overflow: scroll;
+  height: 670px;
 }
 
 .userTile {
-  width: 300px;
+  width: 200px;
   height: auto;
   object-fit: cover;
   border: 4px solid #654321;

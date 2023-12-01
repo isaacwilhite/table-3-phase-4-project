@@ -1,10 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useFormik } from 'formik'
+import * as yup from 'yup'
 import AlertBar from './AlertBar'
 
 const Signup = () => {
   const navigate = useNavigate()
   
+
+  const [newUser, setNewUser] = useState({})
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
   const [confirmPass, setConfirmPass] = useState('')
@@ -12,89 +16,111 @@ const Signup = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('');
 
-  const handleChange = (e) => {
-    if (e.target.id == 'email_input') {
-      setEmail(e.target.value)
-      console.log(email)
-    } else if (e.target.id == 'pass_input') {
-      setPass(e.target.value)
-      console.log(pass)
-    } else if (e.target.id == 'confirm_pass') {
-      setConfirmPass(e.target.value)
-      console.log(confirmPass)
-    }
-  }
 
-  const handleCreate = () => {
-    if (pass !== confirmPass) {
-      setSnackbarMessage('Passwords do not match.');
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
-      return;
-    }
-  
-    // Additional password requirements checks go here
-  
-    const data = {
-      email: email,
-      password: pass,
-    };
-  
-    fetch(`/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
+
+
+  const formSchema = yup.object().shape({
+    email: yup.string().required('Please enter your email').typeError('Please enter a string.'),
+    password: yup.string().required('Please enter a password.').typeError('Please enter a string.'),
+    confirmpassword: yup.string().required('Please enter the same password.').typeError('Please enter a string.'), 
+  })
+
+const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: formSchema,
+    onSubmit: async (values) => {
+      await fetch('/signup', {
+        method: "POST",
+        headers: {
+          "Content-Type" : "application/json"
+        },
+        body: JSON.stringify(values, null, 2),
+      })
+      .then(res => {
+        if (res.status === 201) res.json()
+        else {
+          setSnackbarMessage('User cannot be created.');
+          setSnackbarSeverity('error');
+          setSnackbarOpen(true);
+      } 
+
     })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error(`Failed to create account. Status: ${res.status}`);
-        }
-      })
-      .then((userData) => {
+      .then(data => {
+        setNewUser(data)
         localStorage.setItem('user_active', 'true');
-        localStorage.setItem('current_user', userData.id);
-        console.log('User ID stored in local storage:', userData.id);
-        navigate('/userhome');
+        navigate("/userhome")
+        
       })
-      .catch((error) => {
-        setSnackbarMessage(`Error creating account: ${error.message}`);
-        setSnackbarSeverity('error');
-        setSnackbarOpen(true);
-        console.error('Error creating account:', error.message);
-        // Handle the error (e.g., display an error message to the user)
-      });
+
+    }
+  }) 
+
+
+  
+
+  const handleInputChange = (e) => {
+    const trimmedValue = e.target.value.trim();
+    formik.handleChange(e);
+    formik.setFieldValue(e.target.name, trimmedValue);
+
   };
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
   
-
   return (
     <div className='modal'>
-      
-      <h1 className='modaltitle'>Register New User</h1>
-      <h3 className='modaltag'>Please enter your email and password.</h3>
-      <input id='email_input' className='loginInput' type='text' onChange={handleChange} placeholder="Enter Email"></input>
-      <input id='pass_input' className='loginInput' type='password' onChange={handleChange} placeholder="Enter Password"></input>
-      <input id='confirm_pass' className='loginInput' type='password' onChange={handleChange} placeholder="Confirm Password"></input>
-      <div id='loginButtons'>
-        <button className='modalbutton' onClick={handleCreate}>Sign Up</button>
-        <button className='modalbutton' onClick={() => navigate('/')}>Cancel</button>
-        <AlertBar
+
+      <form id='signupForm' onSubmit={formik.handleSubmit}>
+        <h1 className='modaltitle'>Register New User</h1>
+        <h3 className='modaltag'>Please enter your email and password.</h3>
+        <div className='signupInput'>
+        <input className='signup'
+          id='email'
+          name="email"
+          onChange={handleInputChange}
+          value={formik.values.email}
+          placeholder="Enter Email"
+          required="true"
+        />
+        <input className='signup'
+          id='password'
+          name="password"
+          type="password"
+          onChange={handleInputChange}
+          value={formik.values.password}
+          placeholder="Enter Password"
+          required="true"
+        />
+        <input className='signup'
+          id='confirmpassword'
+          name="confirmpassword"
+          type="password"
+          onChange={handleInputChange}
+          value={formik.values.confirmpassword}
+          placeholder="Confirm Password"
+          required="true"
+        />
+        </div>
+        <div id='loginButtons'>
+          <button className='modalbutton' type='submit'>Sign Up</button>
+          <button className='modalbutton' onClick={() => navigate('/')}>Cancel</button>
+          <AlertBar
           message={snackbarMessage}
           setAlertMessage={setSnackbarMessage}
           snackType={snackbarSeverity}
           handleSnackType={setSnackbarSeverity}
           onClose={handleCloseSnackbar}
       />
+        </div>
+      </form>
       </div>
-    </div>
-  )
+  );
+
 }
 
 export default Signup;

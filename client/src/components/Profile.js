@@ -30,7 +30,7 @@ const Profile = () => {
 
   const [name, setName] = useState('')
   const [age, setAge] = useState('')
-  const [zipcode, setZipcode] = useState('')
+  const [location, setLocation] = useState('')
   const [bio, setBio] = useState('')
   const [imageUrl, setImageUrl] = useState('')
 
@@ -39,8 +39,8 @@ const Profile = () => {
       setName(e.target.value)
     } else if (e.target.id == 'age_input') {
       setAge(e.target.value)
-    } else if (e.target.id == 'zipcode_input') {
-      setZipcode(e.target.value)
+    } else if (e.target.id == 'location_input') {
+      setLocation(e.target.value)
     } else if (e.target.id == 'bio_input') {
       setBio(e.target.value)
     } else if (e.target.id == 'photo_input') {
@@ -51,13 +51,14 @@ const Profile = () => {
   const handleUpdate = () => {
     const id = currentUser.id;
     const data = {
-      name: name,
-      age: +age,
-      zipcode: zipcode,
-      bio: bio,
-      profile_picture: imageUrl,
-    };
-  
+
+      "name": name,
+      "age": +age,
+      "location": location,
+      "bio": bio,
+      "profile_picture": imageUrl
+    }
+
     fetch(`/users/${id}`, {
       method: 'PATCH',
       headers: {
@@ -99,12 +100,7 @@ const Profile = () => {
             <label htmlFor='age_input'>Age:</label>
             <input id='age_input' className='loginInput' type='number' onChange={handleChange} placeholder="Enter Age"></input>
             <label htmlFor='location_input'>My Location:</label>
-            <select id='location_input' className='loginInput' onChange={handleChange} placeholder="Enter Zip Code">
-              <option value=''>Select Your City</option>
-              <option value='Los Angeles'>Los Angeles</option>
-              <option value='Denver'>Denver</option>
-              <option value='Portland'>Portland</option>
-            </select>
+            <input id='location_input' className='loginInput' type='text' onChange={handleChange} placeholder="Enter a location"></input>
             <label htmlFor='bio_input'>Bio:</label>
             <input id='bio_input' className='loginInput' type='text' onChange={handleChange} placeholder="Enter Bio"></input>
             <label htmlFor='photo_input'>Photo:</label>

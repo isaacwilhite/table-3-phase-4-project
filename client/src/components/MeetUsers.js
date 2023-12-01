@@ -1,3 +1,4 @@
+
 import NavBar from './NavBar'
 import Header from './Header'
 import { useNavigate } from 'react-router-dom'
@@ -6,7 +7,7 @@ import UserCard from './UserCard'
 import AlertBar from './AlertBar'
 
 
-let index = 0
+let index = 0;
 
 const MeetUsers = () => {
   const navigate = useNavigate()
@@ -34,6 +35,7 @@ const MeetUsers = () => {
       .then(res => res.json())
       .then(data => {
         setProspects(data)
+        console.log(data[index].id)
         setCurrentProspect(data[index])
         index++
         if (index == prospects.length) index = 0

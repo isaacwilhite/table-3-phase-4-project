@@ -65,7 +65,6 @@ instance
 .vscode
 package-lock.json
 
-.env
 
 Pipfile.lock
 
