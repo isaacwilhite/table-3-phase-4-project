@@ -2,13 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, LoadScript, Autocomplete, Marker, InfoWindow } from '@react-google-maps/api';
 import UserCard from './UserCard';
-const libraries = ['places'];
+const libraries = ['places', 'geometry'];
 
 const UserMap = ({user}) => {
   const containerStyle = {
-    margin: "0 auto", // Center the element horizontally
-    width: "80%",      // Set the width to 80% of the parent container
-    maxWidth: "600px", // Limit the maximum width to 600 pixels
+    margin: "0 auto", 
+    width: "80%",     
+    maxWidth: "600px", 
     height: "400px",
     position: "relative",
     overflow: "hidden",
@@ -16,14 +16,8 @@ const UserMap = ({user}) => {
     marginBottom: "15px",
   };
 
-
-  const center = {
-    lat: 40.7128,
-    lng: -74.0060,
-  };
-
   const [autocomplete, setAutocomplete] = useState(null);
-  const [markerPosition, setMarkerPosition] = useState(center);
+  const [markerPosition, setMarkerPosition] = useState(null);
   const [infoWindow, setInfoWindow] = useState(null);
   const [markerInfo, setMarkerInfo] = useState({
     title: 'Marker Information',
@@ -50,12 +44,53 @@ const UserMap = ({user}) => {
       .then(res => res.json())
       .then(data => setCurrentUser(data))
   }, [])
+
+  useEffect(() => {
+    if (currentUser.location) {
+      const geocoder = new window.google.maps.Geocoder();
+
+      // Geocode the current user's location
+      geocoder.geocode({ address: currentUser.location }, (results, status) => {
+        if (status === 'OK' && results.length > 0) {
+          const userLocation = results[0].geometry.location;
+
+          // Set the center of the map to the user's geocoded location
+          setMarkerPosition({
+            lat: userLocation.lat(),
+            lng: userLocation.lng(),
+          });
+        } else {
+          console.error('Geocoding failed for current user:', status);
+        }
+      });
+    }
+  }, [currentUser.location]);
+
   
 
   const onLoad = (map) => {
     console.log('Map loaded:', map);
-    setPlacesService(new window.google.maps.places.PlacesService(map));
-  };
+    const geocoder = new window.google.maps.Geocoder();
+
+  // Geocode the current user's location
+  geocoder.geocode({ address: currentUser.location }, (results, status) => {
+   
+    if (status === 'OK' && results.length > 0) {
+      const userLocation = results[0].geometry.location;
+
+      // Set the center of the map to the user's geocoded location
+      map.setCenter(userLocation);
+
+      // Optional: You can also set the map zoom level if needed
+      map.setZoom(14);
+    } else {
+      console.error('Geocoding failed for current user:', status);
+    }
+  });
+
+  // Set the PlacesService for other functionalities
+  setPlacesService(new window.google.maps.places.PlacesService(map));
+};
 
   const handleSliderChange = (event) => {
     setSliderValue(event.target.value);
@@ -69,7 +104,7 @@ const UserMap = ({user}) => {
       setCurrentProspect({
         name: location.title || 'No Name',
         bio: location.content || 'No Bio',
-        photo: location.photo || '',  // Make sure to provide a default value or handle this case
+        photo: location.photo || '',  
         id: location.id || 'No ID',
       });
   
@@ -77,13 +112,13 @@ const UserMap = ({user}) => {
         position: location.position,
         title: location.title || 'No Title',
         content: location.content || 'No Content',
-        photo: location.photo || '',  // Make sure to provide a default value or handle this case
+        photo: location.photo || '', 
         id: location.id || 'No ID',
       });
     }
   
   
-    // Assuming location contains information about the prospect
+
     console.log(location)
     console.log(currentProspect)
     console.log(infoWindow)
@@ -99,13 +134,13 @@ const UserMap = ({user}) => {
       const data = await response.json();
   
       if (data && data.length > 0) {
-        const userLocations = []; // Declare userLocations here
+        const userLocations = []; 
   
         const geocoder = new window.google.maps.Geocoder();
   
         for (const user of data) {
           if (user.location) {
-            // Geocode the user's address
+           
             geocoder.geocode({ address: user.location }, (results, status) => {
               if (status === 'OK' && results.length > 0) {
                 const preciseLocation = results[0].geometry.location;
@@ -131,7 +166,6 @@ const UserMap = ({user}) => {
           }
         }
   
-        // Now you can use userLocations here
         console.log('User locations:', userLocations);
         setUserLocations(userLocations);
       } else {
@@ -141,6 +175,10 @@ const UserMap = ({user}) => {
       console.error('Error fetching user locations:', error);
     }
   };
+
+  
+  
+  
 
 
   const swipe = async (e) => {
@@ -156,39 +194,18 @@ const UserMap = ({user}) => {
             receiver: currentProspect.id,
           }), 
         });
-  
-        // Assuming `infoWindow` is a function to close or clear the info window
         setInfoWindow(null);
-  
         alert("Connection request sent!");
-  
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-  
-        // Set the next prospect
-        // const nextProspectIndex = (prospects.indexOf(currentProspect) + 1) % prospects.length;
-        // setCurrentProspect(prospects[nextProspectIndex]);
       } catch (error) {
         console.error('Error swiping:', error);
-        // Handle the error as needed
       }
     } else {
       alert('No prospects available.');
     }
   };
-  
-
-  const reject = (e) => {
-    setCurrentProspect(prospects)
-    // index++
-    // if (index == prospects.length) index = 0
-  }
-  
-  
-
-  useEffect(() => {
-  }, []);
 
   return (
     <div className='meetmap'>
@@ -199,7 +216,7 @@ const UserMap = ({user}) => {
             type="range"
             id="rangeSlider"
             min="1"
-            max="100"
+            max="10000"
             value={sliderValue}
             step="1"
             onChange={handleSliderChange}
@@ -209,7 +226,7 @@ const UserMap = ({user}) => {
       <button onClick={onSearch}>Show Users in radius</button>
       <LoadScript
         googleMapsApiKey="AIzaSyB7JeG6WXNJj3cId2QFAYYCRVx2yI6lnXA"
-        libraries={libraries} // Add any additional libraries you need
+        libraries={libraries} 
       >
         
         
@@ -242,8 +259,7 @@ const UserMap = ({user}) => {
                 <h1 id='cardName'>{infoWindow.title}</h1>
                 <p id='cardBio'>{infoWindow.content}</p>
                 <div>
-                  <button name='yes' className='modalbutton' style={{ color: 'green', fontSize: '2rem' }} onClick={swipe} >✔</button>
-                  <button name='no' className='modalbutton' style={{ color: 'red', fontSize: '2rem' }} onClick={reject}>✗</button>
+                  <button name='yes' className='modalbutton' style={{ color: 'green', fontSize: '2rem' }} onClick={swipe} >MATCH!</button>
                 </div>
               </div>
             </InfoWindow>

@@ -1,42 +1,12 @@
-// import NavBar from './NavBar'
-// import Header from './Header'
-// import { useNavigate } from 'react-router-dom'
-// import { useEffect } from 'react'
-// import MeetUsersGM from './MeetUserGM'
 
-
-// const MeetUsers = () => {
-//   const navigate = useNavigate()
-  
-//   useEffect(() => {
-//     if (localStorage.getItem('user_active') == 'false') {
-//       navigate('/');
-//     }
-//   }, []);
-  
-//   const title = 'MEET USERS'
-//   return (
-//     <div className='container'>
-//       <Header title={title} />
-//       <NavBar />
-//       <div className='content'>
-//         <h1>Content goes here.</h1>
-//         <MeetUsersGM />
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default MeetUsers;
 
 import NavBar from './NavBar'
 import Header from './Header'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import MeetUsersGM from './MeetUserGM'
 import UserCard from './UserCard'
 
-let index = 0
+let index = 0;
 
 const MeetUsers = () => {
   const navigate = useNavigate()
@@ -62,6 +32,7 @@ const MeetUsers = () => {
       .then(res => res.json())
       .then(data => {
         setProspects(data)
+        console.log(data[index].id)
         setCurrentProspect(data[index])
         index++
         if (index == prospects.length) index = 0
@@ -99,8 +70,7 @@ const MeetUsers = () => {
       <Header title={title} />
       <NavBar />
       <div className='content'>
-        <h1>Content goes here.</h1>
-        <UserCard user={currentProspect} swipe={swipe} reject={reject}/>
+      <UserCard user={currentProspect} swipe={swipe} reject={reject}/>
       </div>
     </div>
   )

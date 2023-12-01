@@ -1,6 +1,7 @@
 import NavBar from './NavBar'
 import Header from './Header'
 import { useNavigate } from 'react-router-dom'
+import { GoogleMap, LoadScript, Autocomplete, Marker, InfoWindow } from '@react-google-maps/api'
 import { useEffect, useState } from 'react'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
@@ -50,7 +51,12 @@ const CreateEvent = () => {
         body: JSON.stringify(values, null, 2),
       })
       .then(res => res.json())
-      .then(data => setNewEvent(data))
+      .then(data => {
+        setNewEvent(data)
+        formik.resetForm();
+        alert("Event Has been created!")
+      })
+      
     }
   })  
 
@@ -98,9 +104,13 @@ const CreateEvent = () => {
   }
 
   const mapped = mutualSwipes.map((item, idx) => {
-    return <img id={item.id} key={idx} src={item.profile_picture} className='eventTile' onClick={handleSetGuest}></img>
+    return <img id="eventTileImg" key={idx} src={item.profile_picture} className='eventTile' onClick={handleSetGuest}></img>
   })
   
+  // const handleSubmit = (e) => {
+  //   e.prevent.default();
+    
+  // }
 
   const title = 'EVENTS'
   return (
@@ -109,7 +119,7 @@ const CreateEvent = () => {
       <NavBar />
       <div className='createEventContent'>
         <h2>Create an event for your new connections!</h2>
-        <div id='userTiles'>
+        <div id='eventUserTiles' >
           {mapped}
         </div>
         <form id='eventForm' onSubmit={formik.handleSubmit}>
