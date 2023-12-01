@@ -1,6 +1,6 @@
 # DateSmith Dating App
 
-Welcome to DateSmith, the exciting dating app that brings people together through the power of swiping! Whether you're looking for love, friendship, or just a casual connection, DateSmith has got you covered.
+Welcome to DateSmith, the exciting dating app that brings people together through the power of swiping! Whether you're looking for love, friendship, or just a casual connection, DateSmith has got you covered. Feel free to make connections and even plan Events!
 
 ## Installation Guide
 Follow these steps to get DateSmith up and running on your local machine.
@@ -49,6 +49,13 @@ Start the client app:
 **npm start**
 
 Now, you should be able to access SwipeMate by navigating to http://localhost:3000 in your web browser.
+
+## Upcoming Updates
+- implement a messaging functionality
+- create swipes to create a connection rather than buttons
+- connecting the map with the events
+- mobile functionality
+
 
 ### Contributors
 
