@@ -67,7 +67,6 @@ const MeetUsers = () => {
       <Header title={title} />
       <NavBar />
       <div className='content'>
-        <h1>Content goes here.</h1>
         <UserCard user={currentProspect} swipe={swipe} reject={reject}/>
       </div>
     </div>
