@@ -410,12 +410,6 @@ select#preference_input {
   margin-top: 0.4rem;
 }
 
-.userCard {
-  display: flex;
-  margin-bottom: 15px;
-  overflow: scroll;
-}
-
 .mapUserCard {
   width: 400px;
 }
