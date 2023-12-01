@@ -110,7 +110,7 @@ const UserMap = ({user}) => {
               if (status === 'OK' && results.length > 0) {
                 const preciseLocation = results[0].geometry.location;
                 
-                // Add the user's precise location to the array
+                
                 userLocations.push({
                   position: {
                     lat: preciseLocation.lat(),
@@ -122,7 +122,7 @@ const UserMap = ({user}) => {
                   id: user.id
               });
   
-                // Set the state to trigger a re-render and display the markers
+                
                 setPlacesMarkers([...userLocations]);
               } else {
                 console.error('Geocoding failed:', status);

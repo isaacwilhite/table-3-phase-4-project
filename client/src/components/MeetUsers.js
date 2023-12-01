@@ -33,14 +33,10 @@ import NavBar from './NavBar'
 import Header from './Header'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-<<<<<<< HEAD
-import MeetUserGM from './MeetUserGM';
-=======
->>>>>>> main
-
+import MeetUsersGM from './MeetUserGM'
 import UserCard from './UserCard'
 
-let index = 0;
+let index = 0
 
 const MeetUsers = () => {
   const navigate = useNavigate()
@@ -103,11 +99,8 @@ const MeetUsers = () => {
       <Header title={title} />
       <NavBar />
       <div className='content'>
-<<<<<<< HEAD
-      <UserCard user={currentProspect} swipe={swipe} reject={reject}/>
-=======
+        <h1>Content goes here.</h1>
         <UserCard user={currentProspect} swipe={swipe} reject={reject}/>
->>>>>>> main
       </div>
     </div>
   )
