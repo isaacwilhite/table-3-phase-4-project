@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 from sqlalchemy import text
 
 load_dotenv()
-app.secret_key = os.environ.get("APP_SECRET")
+app.secret_key = secrets.token_hex(16)
 
 # Views go here!
 
