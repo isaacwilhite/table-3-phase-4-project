@@ -33,7 +33,10 @@ import NavBar from './NavBar'
 import Header from './Header'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+<<<<<<< HEAD
 import MeetUserGM from './MeetUserGM';
+=======
+>>>>>>> main
 
 import UserCard from './UserCard'
 
@@ -100,7 +103,11 @@ const MeetUsers = () => {
       <Header title={title} />
       <NavBar />
       <div className='content'>
+<<<<<<< HEAD
       <UserCard user={currentProspect} swipe={swipe} reject={reject}/>
+=======
+        <UserCard user={currentProspect} swipe={swipe} reject={reject}/>
+>>>>>>> main
       </div>
     </div>
   )

@@ -1,16 +1,30 @@
 import NavBar from './NavBar'
 import Header from './Header'
 import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect , useState } from 'react'
 
 const Connections = () => {
   const navigate = useNavigate()
-  
+  const [mutualSwipes, setMutualSwipes] = useState([])
+
   useEffect(() => {
     if (localStorage.getItem('user_active') == 'false') {
       navigate('/');
     }
   }, []);
+
+  useEffect(() => {
+    fetch('/mutualswipes')
+      .then(res => res.json())
+      .then(data => {
+        setMutualSwipes(data)
+        console.log(data)
+      })
+  }, [])
+
+  const mapped = mutualSwipes.map((item, idx) => {
+    return <img key={idx} src={item.profile_picture} className='userTile'></img>
+  })
   
   const title = 'CONNECTIONS'
   return (
@@ -18,7 +32,9 @@ const Connections = () => {
       <Header title={title} />
       <NavBar />
       <div className='content'>
-        <h1>Content goes here.</h1>
+        <div id='userTiles'>
+          {mapped}
+        </div>
       </div>
     </div>
   )
