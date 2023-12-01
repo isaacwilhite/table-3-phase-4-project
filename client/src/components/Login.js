@@ -1,11 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import AlertBar from './AlertBar'
 
 const Login = () => {
   const navigate = useNavigate()
   
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [snackType, setSnackType] = useState('');
 
   const handleChange = (e) => {
     if (e.target.id == 'email_input') {
@@ -21,7 +24,8 @@ const Login = () => {
     const data = {
       "email": email,
       "password": pass
-    }
+    };
+
     fetch(`/login`, {
       method: 'POST',
       headers: {
@@ -31,16 +35,25 @@ const Login = () => {
     })
     .then((res) => {
       if (res.ok) {
-        localStorage.setItem('user_active', 'true')
-        navigate('/userhome')  
+        localStorage.setItem('user_active', 'true');
+        navigate('/userhome');
       } else {
-        alert('Invalid user credentials.')
+        // Display an error message using the AlertBar
+        setAlertMessage('Invalid user credentials.');
+        setSnackType('error');
       }
     })
-  }
+    .catch((error) => {
+      // Handle other errors (e.g., network issues)
+      console.error('Login failed:', error);
+      setAlertMessage('Login failed. Please try again.');
+      setSnackType('error');
+    });
+  };
 
   return (
     <div className='modal'>
+      
       <h1 className='modaltitle'>Login</h1>
       <h3 className='modaltag'>Please enter your email and password.</h3>
       <input id='email_input' className='loginInput' type='text' onChange={handleChange}placeholder="Enter Email"></input>
@@ -48,6 +61,14 @@ const Login = () => {
       <div>
         <button className='modalbutton' onClick={handleLogin}>Login</button>
         <button className='modalbutton' onClick={() => navigate('/')}>Cancel</button>
+        {alertMessage && (
+        <AlertBar
+          message={alertMessage}
+          setAlertMessage={setAlertMessage}
+          snackType={snackType}
+          handleSnackType={setSnackType}
+        />
+      )}
       </div>
     </div>
   )

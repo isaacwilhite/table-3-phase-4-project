@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
+import AlertBar from "./AlertBar"
 
 const CreateEvent = () => {
   const navigate = useNavigate()
@@ -11,6 +12,8 @@ const CreateEvent = () => {
   const [currentUser, setCurrentUser] = useState({})
   const [invitedId, setInvitedId] = useState('')
   const [newEvent, setNewEvent] = useState('')
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [snackType, setSnackType] = useState("");
 
   useEffect(() => {
     if (localStorage.getItem('user_active') == 'false') {
@@ -42,17 +45,34 @@ const CreateEvent = () => {
     },
     validationSchema: formSchema,
     onSubmit: async (values) => {
-      await fetch('/events', {
-        method: "POST",
-        headers: {
-          "Content-Type" : "application/json"
-        },
-        body: JSON.stringify(values, null, 2),
-      })
-      .then(res => res.json())
-      .then(data => setNewEvent(data))
+      try {
+        const response = await fetch('/events', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(values, null, 2),
+        });
+        const data = await response.json();
+  
+        // Check if the submission was successful
+        if (response.ok) {
+          // Set success message
+          setAlertMessage("Event created successfully!");
+          setSnackType("success");
+        } else {
+          // Set error message
+          setAlertMessage("Error creating the event. Please try again.");
+          setSnackType("error");
+        }
+      } catch (error) {
+        // Handle other errors
+        console.error("Error submitting the form:", error);
+        setAlertMessage("An unexpected error occurred. Please try again.");
+        setSnackType("error");
+      }
     }
-  })  
+  });
 
   useEffect(() => {
     fetch('/connections', {
@@ -105,6 +125,7 @@ const CreateEvent = () => {
   const title = 'EVENTS'
   return (
     <div className='container'>
+      
       <Header title={title} />
       <NavBar />
       <div className='createEventContent'>
@@ -126,6 +147,14 @@ const CreateEvent = () => {
           <br/>
           <button type='submit'>Submit</button>
         </form>
+        {alertMessage && (
+        <AlertBar
+          message={alertMessage}
+          setAlertMessage={setAlertMessage}
+          snackType={snackType}
+          handleSnackType={setSnackType}
+        />
+      )}
       </div>
     </div>
   )
