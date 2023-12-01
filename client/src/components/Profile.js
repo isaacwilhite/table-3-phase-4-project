@@ -117,7 +117,7 @@ const Profile = () => {
               <option value='nonbinary'>Nonbinary</option>
             </select>
           </form>
-          <div>
+          <div id='loginButtons'>
             <button className='modalbutton' onClick={() => navigate('/')}>Cancel</button>
             <button className='modalbutton' onClick={handleUpdate}>Submit</button>
             <AlertBar

@@ -82,7 +82,7 @@ const Signup = () => {
       <input id='email_input' className='loginInput' type='text' onChange={handleChange} placeholder="Enter Email"></input>
       <input id='pass_input' className='loginInput' type='password' onChange={handleChange} placeholder="Enter Password"></input>
       <input id='confirm_pass' className='loginInput' type='password' onChange={handleChange} placeholder="Confirm Password"></input>
-      <div>
+      <div id='loginButtons'>
         <button className='modalbutton' onClick={handleCreate}>Sign Up</button>
         <button className='modalbutton' onClick={() => navigate('/')}>Cancel</button>
         <AlertBar
