@@ -23,29 +23,43 @@ const Signup = () => {
 
   const handleCreate = () => {
     if (pass !== confirmPass) {
-      alert("Passwords do not match.")
-      return
+      alert("Passwords do not match.");
+      return;
     }
+  
+    // Additional password requirements checks go here
+  
     const data = {
-      "email": email,
-      "password": pass
-    }
+      email: email,
+      password: pass,
+    };
+  
     fetch(`/signup`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     })
-    .then((res) => {
-      if (res.ok) {
-        localStorage.setItem('user_active', 'true')
-        // localStorage.setItem('current_user', data.id)
-        // console.log('User ID stored in local storage:', data.id);
-        navigate('/userhome')
-      }
-    })
-  }
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error(`Failed to create account. Status: ${res.status}`);
+        }
+      })
+      .then((userData) => {
+        localStorage.setItem('user_active', 'true');
+        localStorage.setItem('current_user', userData.id);
+        console.log('User ID stored in local storage:', userData.id);
+        navigate('/userhome');
+      })
+      .catch((error) => {
+        console.error('Error creating account:', error.message);
+        // Handle the error (e.g., display an error message to the user)
+      });
+  };
+  
 
   return (
     <div className='modal'>
