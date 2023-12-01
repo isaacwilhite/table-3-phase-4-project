@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import AlertBar from './AlertBar'
 
 const Signup = () => {
   const navigate = useNavigate()
@@ -7,6 +8,9 @@ const Signup = () => {
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
   const [confirmPass, setConfirmPass] = useState('')
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('');
 
   const handleChange = (e) => {
     if (e.target.id == 'email_input') {
@@ -23,7 +27,9 @@ const Signup = () => {
 
   const handleCreate = () => {
     if (pass !== confirmPass) {
-      alert("Passwords do not match.");
+      setSnackbarMessage('Passwords do not match.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
       return;
     }
   
@@ -55,14 +61,22 @@ const Signup = () => {
         navigate('/userhome');
       })
       .catch((error) => {
+        setSnackbarMessage(`Error creating account: ${error.message}`);
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
         console.error('Error creating account:', error.message);
         // Handle the error (e.g., display an error message to the user)
       });
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
   };
   
 
   return (
     <div className='modal'>
+      
       <h1 className='modaltitle'>Register New User</h1>
       <h3 className='modaltag'>Please enter your email and password.</h3>
       <input id='email_input' className='loginInput' type='text' onChange={handleChange} placeholder="Enter Email"></input>
@@ -71,6 +85,13 @@ const Signup = () => {
       <div id='loginButtons'>
         <button className='modalbutton' onClick={handleCreate}>Sign Up</button>
         <button className='modalbutton' onClick={() => navigate('/')}>Cancel</button>
+        <AlertBar
+          message={snackbarMessage}
+          setAlertMessage={setSnackbarMessage}
+          snackType={snackbarSeverity}
+          handleSnackType={setSnackbarSeverity}
+          onClose={handleCloseSnackbar}
+      />
       </div>
     </div>
   )

@@ -3,6 +3,8 @@ import Header from './Header'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import UserCard from './UserCard'
+import AlertBar from './AlertBar'
+
 
 let index = 0
 
@@ -11,6 +13,8 @@ const MeetUsers = () => {
   const [currentUser, setCurrentUser] = useState({})
   const [prospects, setProspects] = useState([])
   const [currentProspect, setCurrentProspect] = useState({})
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState('');
   
   useEffect(() => {
     if (localStorage.getItem('user_active') == 'false') {
@@ -36,24 +40,40 @@ const MeetUsers = () => {
       })
   }, [])
 
-  const swipe = (e) => {
-    index++
+  const swipe = () => {
+    index++;
     if (index >= prospects.length) {
-      alert("That's everyone for now! Nobody is left!")
-      navigate('/userhome')
+      setAlertMessage("That's everyone for now! Nobody is left!");
+      setAlertSeverity('info');
+      navigate('/userhome');
+      return;
     }
+  
     fetch('/swipe', {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type" : "application/json"
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        "sender" : currentUser.id,
-        "receiver" : currentProspect.id
-      })
+        sender: currentUser.id,
+        receiver: currentProspect.id,
+      }),
     })
-    setCurrentProspect(prospects[index])
-  }
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error swiping: ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(() => {
+        setCurrentProspect(prospects[index]);
+      })
+      .catch((error) => {
+        setAlertMessage(`Error swiping: ${error.message}`);
+        setAlertSeverity('error');
+      });
+  };
+  
 
   const reject = (e) => {
     setCurrentProspect(prospects[index])
@@ -64,10 +84,19 @@ const MeetUsers = () => {
   const title = 'MEET USERS'
   return (
     <div className='container'>
+      
       <Header title={title} />
       <NavBar />
       <div className='content'>
         <UserCard user={currentProspect} swipe={swipe} reject={reject}/>
+        <AlertBar
+        message={alertMessage}
+        setAlertMessage={setAlertMessage}
+        snackType={alertSeverity}
+        handleSnackType={setAlertSeverity}
+        onClose={() => setAlertMessage('')}
+        open={Boolean(alertMessage)}
+      />
       </div>
     </div>
   )
